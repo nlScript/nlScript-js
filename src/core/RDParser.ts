@@ -25,7 +25,10 @@ class RDParser {
 
     parse(autocompletions?: Array<Autocompletion | undefined>): DefaultParsedNode {
         let seq = new SymbolSequence(BNF.ARTIFICIAL_START_SYMBOL, undefined, undefined);
-        let parsedSequence: SymbolSequence = this.parseRecursive(seq, autocompletions);
+        let endOfInput: SymbolSequence[] = [];
+        let parsedSequence: SymbolSequence = this.parseRecursive(seq, autocompletions, endOfInput);
+        if(autocompletions !== undefined)
+            this.collectAutocompletions(endOfInput, autocompletions as Autocompletion[])
         if(autocompletions !== undefined && autocompletions.length > 0 && autocompletions.at(-1) === undefined)
             autocompletions.splice(autocompletions.length - 1, 1);
         let last: DefaultParsedNode[] = [];
@@ -44,6 +47,12 @@ class RDParser {
             production.builtAST(pn, ...children);
         
         return pn;
+    }
+
+    private collectAutocompletions(endOfInput: SymbolSequence[], autocompletions: Autocompletion[]): void {
+        for(const seq of endOfInput) {
+            this.addAutocompletions(seq, autocompletions);
+        }
     }
 
     private addAutocompletions(symbolSequence: SymbolSequence, autocompletions: Array<Autocompletion | undefined>): void {
@@ -92,7 +101,7 @@ class RDParser {
         }
     }
 
-    private parseRecursive(symbolSequence: SymbolSequence, autocompletions: Array<Autocompletion | undefined> | undefined): SymbolSequence {
+    private parseRecursive(symbolSequence: SymbolSequence, autocompletions: Array<Autocompletion | undefined> | undefined, endOfInput: Array<SymbolSequence>): SymbolSequence {
         // console.log("parseRecursive");
         // console.log("  symbol sequence = " + symbolSequence);
         // console.log("  lexer           = " + this.lexer);
@@ -104,8 +113,8 @@ class RDParser {
             let matcher = (next as Terminal).matches(this.lexer);
             // console.log("matcher = " + matcher);
             symbolSequence.addMatcher(matcher);
-            if(matcher.state.equals(ParsingState.END_OF_INPUT) && autocompletions !== undefined)
-                this.addAutocompletions(symbolSequence, autocompletions);
+            if(matcher.state.equals(ParsingState.END_OF_INPUT) && endOfInput !== undefined)
+                endOfInput.push(symbolSequence);
             
             if(!matcher.state.equals(ParsingState.SUCCESSFUL))
                 return symbolSequence;
@@ -124,7 +133,7 @@ class RDParser {
         for(let alternate of alternates) {
             let lexerPos: number = this.lexer.getPosition();
             let nextSequence: SymbolSequence = symbolSequence.replaceCurrentSymbol(alternate);
-            let parsedSequence: SymbolSequence = this.parseRecursive(nextSequence, autocompletions);
+            let parsedSequence: SymbolSequence = this.parseRecursive(nextSequence, autocompletions, endOfInput);
             let m: Matcher | undefined = parsedSequence.getLastMatcher();
             if(m !== undefined) {
                 if(m.state.equals(ParsingState.SUCCESSFUL))
