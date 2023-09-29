@@ -178,8 +178,6 @@ export class EBNFCore {
     }
 
     private addRule(rule: Rule): void {
-        if(this.compiled)
-            throw Error("Grammar is already compiled");
         let s: Sym = rule.getTarget();
         if(this.symbols.get(s.getSymbol()) === undefined)
             this.symbols.set(s.getSymbol(), s);
@@ -189,14 +187,14 @@ export class EBNFCore {
                 this.symbols.set(s.getSymbol(), s);
         }
         this.rules.push(rule);
+        this.compiled = false;
     }
 
-    private removeRules(symbol: NonTerminal): void {
-        if(this.compiled)
-            throw Error("Grammar is already compiled");
+    public removeRules(symbol: NonTerminal): void {
         for(let i = this.rules.length - 1; i >= 0; i--)
             if(this.rules[i].getTarget().equals(symbol))
                 this.rules.splice(i, 1);
+        this.compiled = false;
     }
 
     private newOrExistingNonTerminal(type: string | undefined): NonTerminal | undefined {
