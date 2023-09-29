@@ -19,9 +19,13 @@ export class ACEditor {
     constructor(parser: Parser, parent: HTMLElement) {
         this.parser = parser;
         const that = this;
+        const editorElement = this.createEditorElement(parent);
+        const outputElement = this.createOutputElement(parent);
+        const runButton = this.createButton(parent);
+        runButton.onclick = () => that.run();
         this.editor = new EditorView({
             extensions: [],
-            parent: parent
+            parent: editorElement
         });
         this.completer = new ACCompleter(this.editor);
         this.editor.dispatch({
@@ -36,6 +40,40 @@ export class ACEditor {
         });
         // editor.dispatch(editor.state.replaceSelection("hahahahahah "));
         // editor.dispatch({selection: {anchor: 8, head: 11}});
+    }
+
+    private createEditorElement(parent: HTMLElement): HTMLElement {
+        const el = document.createElement("div");
+        el.id = "nls-editor";
+        el.setAttribute("style", "width: 100%; height: 70%; margin-bottom: 3px; border: 1px solid gray;");
+        parent.appendChild(el);
+        return el;
+    }
+
+    private createOutputElement(parent: HTMLElement): HTMLElement {
+        const el = document.createElement("textarea");
+        el.id = "nls-output";
+        el.setAttribute("style", "width: 100%; height: 25%; margin-top: 3px; border: 1px solid gray; padding: 0px;");
+        el.setAttribute("readonly", "true");
+        parent.appendChild(el);
+        return el;
+    }
+
+    private createButton(parent: HTMLElement): HTMLElement {
+        const el = document.createElement("button");
+        el.id = "nls-run";
+        el.setAttribute("style", "margin-top: 10px; margin-left: auto; margin-right: auto; display: block;");
+        el.setAttribute("type", "button");
+        el.innerText = "Run";
+        parent.appendChild(el);
+        return el;
+    }
+
+    run(): void {
+        console.debug("running");
+        const entireText: string = this.editor.state.doc.toString();
+        const pn: ParsedNode = this.parser.parse(entireText);
+        pn.evaluate();
     }
 
     insertCompletion(completion: string | undefined): void {
