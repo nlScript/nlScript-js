@@ -273,7 +273,7 @@ export class Parser {
 					const str: string = pn.getParsedString();
 					const symbol: Sym | undefined = this.targetGrammar.getSymbol(str);
 					if(symbol === undefined)
-						throw new Error("Unknown type '" + str + "'");
+						throw Error("Unknown type '" + str + "'");
 					return symbol;
 				}).withName("type"),
 				this.LIST.withName("list"),
