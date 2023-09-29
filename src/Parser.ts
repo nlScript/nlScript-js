@@ -269,7 +269,13 @@ export class Parser {
 		return g.or("type",
 				g.sequence(undefined,
 						this.IDENTIFIER.withName("identifier")
-				).setEvaluator(pn => this.targetGrammar.getSymbol(pn.getParsedString())).withName("type"),
+				).setEvaluator(pn => {
+					const str: string = pn.getParsedString();
+					const symbol: Sym | undefined = this.targetGrammar.getSymbol(str);
+					if(symbol === undefined)
+						throw new Error("Unknown type '" + str + "'");
+					return symbol;
+				}).withName("type"),
 				this.LIST.withName("list"),
 				this.TUPLE.withName("tupe"),
 				this.CHARACTER_CLASS.withName("character-class")
