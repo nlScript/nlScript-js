@@ -1,5 +1,6 @@
 import { EditorView, basicSetup } from "codemirror";
 import { highlight_extension, ParameterizedCompletion } from "./ParameterizedCompletion";
+import { error_highlight_extension, ErrorHighlight } from "./ErrorHighlight";
 import { StateEffect } from "@codemirror/state";
 import { Parser } from "../Parser";
 import { ParsedNode } from "../ParsedNode";
@@ -14,6 +15,8 @@ export class ACEditor {
 
     private parameterizedCompletion?: ParameterizedCompletion = undefined;
 
+    private readonly errorHighlight?: ErrorHighlight = undefined;
+
     private readonly completer: ACCompleter;
 
     constructor(parser: Parser, parent: HTMLElement) {
@@ -27,6 +30,7 @@ export class ACEditor {
             extensions: [],
             parent: editorElement
         });
+        this.errorHighlight = new ErrorHighlight(this.editor);
         this.completer = new ACCompleter(this.editor);
         this.editor.dispatch({
             effects: StateEffect.reconfigure.of([
@@ -36,6 +40,7 @@ export class ACEditor {
                 this.completer.autocompletionExtension,
                 basicSetup,
                 highlight_extension,
+                error_highlight_extension,
             ])
         });
         // editor.dispatch(editor.state.replaceSelection("hahahahahah "));
