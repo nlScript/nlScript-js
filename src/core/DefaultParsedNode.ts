@@ -3,6 +3,7 @@ import { Matcher } from "./Matcher";
 import { Production } from "./Production";
 import { Sym } from "./Symbol";
 import { Autocompleter } from "../Autocompleter";
+import { Named } from "./Named";
 
 class DefaultParsedNode {
 
@@ -53,8 +54,12 @@ class DefaultParsedNode {
         if(this.symbol instanceof Literal)
             return this.symbol.getSymbol();
         
+        let name: string = this.getName();
+        if(name === Named.UNNAMED)
+            name = this.symbol.getSymbol();
+
         if(this.symbol.isTerminal()) {
-            return this.getParsedString().length > 0 ? Autocompleter.VETO : "${" + this.getName() + "}";
+            return this.getParsedString().length > 0 ? Autocompleter.VETO : "${" + name + "}";
         }
         return undefined;
     }

@@ -16,21 +16,26 @@ import { Repeat } from "../../src/ebnf/Repeat";
 import { Rule } from "../../src/ebnf/Rule";
 import { Star } from "../../src/ebnf/Star";
 import { IntRange } from "../../src/util/IntRange";
+import { ParseException } from "../../src/ParseException";
 
 
 function evaluate(grammar: EBNF, input: string): any {
     const lexer = new Lexer(input);
     const parser = new RDParser(grammar.getBNF(), lexer, EBNFParsedNodeFactory.INSTANCE);
     let p: DefaultParsedNode = parser.parse();
-    p = parser.buildAst(p);
     return p.evaluate();
 }
 
 function checkFailed(grammar: BNF, input: string): void {
     const lexer = new Lexer(input);
     const parser = new RDParser(grammar, lexer, EBNFParsedNodeFactory.INSTANCE);
-    let p: DefaultParsedNode = parser.parse();
-    expect(p.getMatcher().state === ParsingState.SUCCESSFUL).toBeFalsy();
+    try {
+        let p: DefaultParsedNode = parser.parse();
+        expect(p.getMatcher().state === ParsingState.SUCCESSFUL).toBeFalsy();
+    } catch(e: any) {
+        if(!(e instanceof ParseException))
+            throw e;
+    }
 }
 
 function testQuantifier(): void {
@@ -66,7 +71,6 @@ function evaluateHighlevelParser(hlp: Parser, input: string): any {
     let p: DefaultParsedNode = parser.parse();
     if(p.getMatcher().state !== ParsingState.SUCCESSFUL)
         throw new Error("Parsing failed");
-    p = parser.buildAst(p);
     return p.evaluate();
 }
 
@@ -82,7 +86,7 @@ function testList(): void {
     const tgt: EBNFCore = hlp.getTargetGrammar();
     tgt.compile(list);
     const rdParser: RDParser = new RDParser(tgt.getBNF(), new Lexer("1, 2, 3"), EBNFParsedNodeFactory.INSTANCE);
-    const pn: DefaultParsedNode = rdParser.buildAst(rdParser.parse());
+    const pn: DefaultParsedNode = rdParser.parse();
     expect(pn.getMatcher().state).toBe(ParsingState.SUCCESSFUL);
     const result: any[] = pn.evaluate();
     expect(result[0] as number).toBe(1);
@@ -106,7 +110,6 @@ function testTuple(): void {
     let pn: DefaultParsedNode = rdParser.parse();
 
     expect(pn.getMatcher().state).toBe(ParsingState.SUCCESSFUL);
-    pn = rdParser.buildAst(pn);
     const result: any[] = pn.evaluate();
 
     expect(result[0]).toBe(1);
@@ -135,7 +138,7 @@ function testType(): void {
     const tgt = hlp.getTargetGrammar();
     tgt.compile(tuple);
     const rdParser: RDParser = new RDParser(tgt.getBNF(), new Lexer("(1, 2, 3)"), EBNFParsedNodeFactory.INSTANCE);
-    const pn: DefaultParsedNode = rdParser.buildAst(rdParser.parse());
+    const pn: DefaultParsedNode = rdParser.parse();
     expect(pn.getMatcher().state).toBe(ParsingState.SUCCESSFUL);
     const result: any[] = pn.evaluate();
     expect(result[0]).toBe(1);
@@ -152,7 +155,7 @@ function testType(): void {
     const tgt2 = hlp2.getTargetGrammar();
     tgt2.compile(list);
     const rdParser2: RDParser = new RDParser(tgt2.getBNF(), new Lexer("1, 2, 3"), EBNFParsedNodeFactory.INSTANCE);
-    const pn2: DefaultParsedNode = rdParser2.buildAst(rdParser2.parse());
+    const pn2: DefaultParsedNode = rdParser2.parse();
     expect(pn2.getMatcher().state).toBe(ParsingState.SUCCESSFUL);
     const result2: any[] = pn2.evaluate();
     expect(result2[0]).toBe(1);
@@ -170,7 +173,7 @@ function testType(): void {
     const tgt3 = hlp3.getTargetGrammar();
     tgt3.compile(identifier);
     const rdParser3: RDParser = new RDParser(tgt3.getBNF(), new Lexer("3"), EBNFParsedNodeFactory.INSTANCE);
-    const pn3: DefaultParsedNode = rdParser3.buildAst(rdParser3.parse());
+    const pn3: DefaultParsedNode = rdParser3.parse();
     expect(pn3.getMatcher().state).toBe(ParsingState.SUCCESSFUL);
     expect(pn3.evaluate()).toBe(3);
 }
@@ -275,7 +278,7 @@ function testNoVariable(): void {
 
     const testToFail: string = "lj{l";
     const hlp2: Parser = hlp;
-    expect(() => evaluateHighlevelParser(hlp2, testToFail)).toThrowError("Parsing failed");
+    expect(() => evaluateHighlevelParser(hlp2, testToFail)).toThrowError(ParseException);
 }
 
 function testExpression(): void {
@@ -291,7 +294,7 @@ function testExpression(): void {
     // now parse and evaluate the generated grammar:
     tgt.compile(myType.getTarget());
     const rdParser: RDParser = new RDParser(tgt.getBNF(), new Lexer("Today, let's wait for 5 minutes."), EBNFParsedNodeFactory.INSTANCE);
-    const pn: DefaultParsedNode = rdParser.buildAst(rdParser.parse());
+    const pn: DefaultParsedNode = rdParser.parse();
     expect(pn.getMatcher().state).toBe(ParsingState.SUCCESSFUL);
 }
 

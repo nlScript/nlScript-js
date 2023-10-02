@@ -77,7 +77,7 @@ class Digit extends Terminal {
     const c = lexer.peek();
     if (c.match(/[0-9]/))
       return new Matcher(ParsingState.SUCCESSFUL, pos, c);
-    return new Matcher(ParsingState.FAILED, pos, "");
+    return new Matcher(ParsingState.FAILED, pos, c);
   }
 }
 
@@ -129,7 +129,7 @@ class Letter extends Terminal {
     else {
       console.debug("it is not");
     }
-    return new Matcher(ParsingState.FAILED, pos, "");
+    return new Matcher(ParsingState.FAILED, pos, c);
   }
 }
 
@@ -145,7 +145,7 @@ class Whitespace extends Terminal {
     const c = lexer.peek();
     if (c === " " || c === "\t")
       return new Matcher(ParsingState.SUCCESSFUL, pos, c);
-    return new Matcher(ParsingState.FAILED, pos, "");
+    return new Matcher(ParsingState.FAILED, pos, c);
   }
 }
 
@@ -202,7 +202,7 @@ class CharacterClass extends Terminal {
     const c = lexer.peek();
     if (this.ranges.checkCharacter(c.charCodeAt(0)))
       return new Matcher(ParsingState.SUCCESSFUL, pos, c);
-    return new Matcher(ParsingState.FAILED, pos, "");
+    return new Matcher(ParsingState.FAILED, pos, c);
   }
 
   override toString(): string {

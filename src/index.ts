@@ -10,6 +10,8 @@ export * from "./Autocompleter";
 export * from "./Evaluator";
 export * from "./ParsedNode";
 export * from "./Parser";
+export * from "./ParseException";
+
 
 function makeSimpleParser(): Parser {
     const parser = new Parser();

@@ -1,3 +1,4 @@
+import { ParseException } from "../../src/ParseException";
 import { BNF } from "../../src/core/BNF";
 import { DefaultParsedNode } from "../../src/core/DefaultParsedNode";
 import { Lexer } from "../../src/core/Lexer";
@@ -28,7 +29,6 @@ function testSuccess(grammar: BNF, input: string, ...result: string[]): void {
     const l: Lexer = new Lexer(input);
     const test: RDParser = new RDParser(grammar, l, EBNFParsedNodeFactory.INSTANCE);
     let root: DefaultParsedNode = test.parse();
-    root = test.buildAst(root);
 
     expect(root.getMatcher().state).toBe(ParsingState.SUCCESSFUL);
 
@@ -56,9 +56,13 @@ function testSuccess(grammar: BNF, input: string, ...result: string[]): void {
 function testFailure(grammar: BNF, input: string): void {
     const l: Lexer = new Lexer(input);
     const parser: RDParser = new RDParser(grammar, l, EBNFParsedNodeFactory.INSTANCE);
-    const root: DefaultParsedNode = parser.parse();
-
-    expect(root.getMatcher().state.equals(ParsingState.SUCCESSFUL)).toBeFalsy();
+    try {
+        const root: DefaultParsedNode = parser.parse();
+        expect(root.getMatcher().state.equals(ParsingState.SUCCESSFUL)).toBeFalsy();
+    } catch(e: any) {
+        if(!(e instanceof ParseException))
+            throw e;
+    }
 }
 
 function testKeepDelimiters(): void {
@@ -76,7 +80,6 @@ function testKeepDelimiters(): void {
     const l = new Lexer(input);
     const test = new RDParser(grammar.getBNF(), l, EBNFParsedNodeFactory.INSTANCE);
     let root = test.parse();
-    root = test.buildAst(root);
 
     expect(root.getMatcher().state).toBe(ParsingState.SUCCESSFUL);
 

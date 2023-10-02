@@ -10,6 +10,7 @@ import { ParsingState } from "./ParsingState";
 import { Production } from "./Production";
 import { Sym } from "./Symbol";
 import { Terminal } from "./Terminal";
+import { ParseException } from "../ParseException";
 
 class RDParser {
     private readonly parsedNodeFactory: ParsedNodeFactory;
@@ -23,20 +24,35 @@ class RDParser {
         this.parsedNodeFactory = parsedNodeFactory;
     }
 
+    getLexer(): Lexer {
+        return this.lexer;
+    }
+
+    getGrammar(): BNF {
+        return this.grammar;
+    }
+
+    getParsedNodeFactory(): ParsedNodeFactory {
+        return this.parsedNodeFactory;
+    }
+
     parse(autocompletions?: Array<Autocompletion | undefined>): DefaultParsedNode {
         let seq = new SymbolSequence(BNF.ARTIFICIAL_START_SYMBOL, undefined, undefined);
         let endOfInput: SymbolSequence[] = [];
-        let parsedSequence: SymbolSequence = this.parseRecursive(seq, autocompletions, endOfInput);
+        let parsedSequence: SymbolSequence = this.parseRecursive(seq, endOfInput);
         if(autocompletions !== undefined)
             this.collectAutocompletions(endOfInput, autocompletions as Autocompletion[])
         if(autocompletions !== undefined && autocompletions.length > 0 && autocompletions.at(-1) === undefined)
             autocompletions.splice(autocompletions.length - 1, 1);
         let last: DefaultParsedNode[] = [];
         let ret: DefaultParsedNode = this.createParsedTree(parsedSequence, last);
+        ret = this.buildAst(ret);
+        if(ret.getMatcher().state === ParsingState.FAILED)
+            throw new ParseException(ret, last[0], this);
         return ret;
     }
 
-    buildAst(pn: DefaultParsedNode): DefaultParsedNode {
+    private buildAst(pn: DefaultParsedNode): DefaultParsedNode {
         let children: DefaultParsedNode[] = [];
         for(let i = 0; i < pn.numChildren(); i++) {
             children.push(this.buildAst(pn.getChild(i)))
@@ -101,7 +117,7 @@ class RDParser {
         }
     }
 
-    private parseRecursive(symbolSequence: SymbolSequence, autocompletions: Array<Autocompletion | undefined> | undefined, endOfInput: Array<SymbolSequence>): SymbolSequence {
+    private parseRecursive(symbolSequence: SymbolSequence, endOfInput: Array<SymbolSequence>): SymbolSequence {
         // console.log("parseRecursive");
         // console.log("  symbol sequence = " + symbolSequence);
         // console.log("  lexer           = " + this.lexer);
@@ -133,7 +149,7 @@ class RDParser {
         for(let alternate of alternates) {
             let lexerPos: number = this.lexer.getPosition();
             let nextSequence: SymbolSequence = symbolSequence.replaceCurrentSymbol(alternate);
-            let parsedSequence: SymbolSequence = this.parseRecursive(nextSequence, autocompletions, endOfInput);
+            let parsedSequence: SymbolSequence = this.parseRecursive(nextSequence, endOfInput);
             let m: Matcher | undefined = parsedSequence.getLastMatcher();
             if(m !== undefined) {
                 if(m.state.equals(ParsingState.SUCCESSFUL))

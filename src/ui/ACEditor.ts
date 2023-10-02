@@ -6,6 +6,8 @@ import { Parser } from "../Parser";
 import { ParsedNode } from "../ParsedNode";
 import { Autocompletion } from "../core/Autocompletion";
 import { ACCompleter } from "./ACCompleter";
+import { ParseException } from "../ParseException";
+import { Matcher } from "../core/Matcher";
 
 export class ACEditor {
 
@@ -17,13 +19,15 @@ export class ACEditor {
 
     private readonly errorHighlight?: ErrorHighlight = undefined;
 
+    private readonly outputElement: HTMLElement;
+
     private readonly completer: ACCompleter;
 
     constructor(parser: Parser, parent: HTMLElement) {
         this.parser = parser;
         const that = this;
         const editorElement = this.createEditorElement(parent);
-        const outputElement = this.createOutputElement(parent);
+        this.outputElement = this.createOutputElement(parent);
         const runButton = this.createButton(parent);
         runButton.onclick = () => that.run();
         this.editor = new EditorView({
@@ -76,9 +80,17 @@ export class ACEditor {
 
     run(): void {
         console.debug("running");
+        this.outputElement.textContent = "";
         const entireText: string = this.editor.state.doc.toString();
-        const pn: ParsedNode = this.parser.parse(entireText);
-        pn.evaluate();
+        try {
+            const pn: ParsedNode = this.parser.parse(entireText);
+            pn.evaluate();
+        } catch(e: any) {
+            if(e instanceof Error)
+                this.outputElement.textContent = (e as Error).message;
+            else
+                this.outputElement.textContent = e.toString();
+        }
     }
 
     insertCompletion(completion: string | undefined): void {
@@ -173,9 +185,21 @@ export class ACEditor {
         autoinsertSingleOption = autoinsertSingleOption && cursorIsAtEnd;
 
         const textToCursor: string = entireText.substring(0, anchor);
+        this.errorHighlight?.clearError();
         const autocompletions: Autocompletion[] = [];
-        const pn: ParsedNode = this.parser.parse(textToCursor, autocompletions);
-        console.log(pn.getMatcher().state);
+        let pn: ParsedNode;
+        try {
+            pn = this.parser.parse(textToCursor, autocompletions);
+            console.log(pn.getMatcher().state);
+        } catch(e: any) {
+            if(e instanceof ParseException) {
+                const f: Matcher = e.getFirstAutocompletingAncestorThatFailed().getMatcher();
+                this.errorHighlight?.setError(f.pos, f.pos + f.parsed.length);
+                return;
+            }
+            else
+                throw e;
+        }
 
         if(autocompletions.length === 1 && autoinsertSingleOption) {
             this.completer.setCompletions(autocompletions);

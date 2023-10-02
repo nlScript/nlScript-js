@@ -26,7 +26,7 @@ export const error_highlight_extension = StateField.define<DecorationSet>({
 // this is your decoration where you can define the change you want : a css class or directly css attributes
 const error_decoration = Decoration.mark({
   inclusive: true,
-  attributes: {style: "/* background-color: #b7c1e8; */border: gray 1px solid;"},
+  attributes: {style: "/* background-color: #b7c1e8; border: red 1px solid; */ color: red; font-weight: bold; "},
   tagName: "span",
 
   // class: 'red_back'

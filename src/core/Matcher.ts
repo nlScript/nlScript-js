@@ -21,7 +21,7 @@ class Matcher {
             return false;
         let tParsedLength = this.pos + this.parsed.length;
         let oParsedLength = o.pos + o.parsed.length;
-        return tParsedLength > oParsedLength;
+        return tParsedLength >= oParsedLength;
     }
 
     toString(): string {

@@ -17,6 +17,7 @@ import { NamedRule } from "./ebnf/NamedRule";
 import { Rule } from "./ebnf/Rule";
 import { Evaluator } from "./Evaluator";
 import { IntRange } from "./util/IntRange";
+import { BNF } from "./core/BNF";
 
 export class Parser {
 
@@ -107,7 +108,6 @@ export class Parser {
         if(!pn.getMatcher().state.equals(ParsingState.SUCCESSFUL))
             throw new Error("Parsing failed");
         
-        pn = parser.buildAst(pn);
         const rhs: Named<any>[] = pn.evaluate();
 
         const newRule: Rule = this.targetGrammar.sequence(type, ...rhs);
@@ -131,12 +131,10 @@ export class Parser {
             this.compile();
         
         this.symbol2Autocompletion.clear();
-        const rdParser: EBNFParser = new EBNFParser(this.targetGrammar.getBNF(), new Lexer(text));
+		const grammar: BNF = this.targetGrammar.getBNF();
+        const rdParser: EBNFParser = new EBNFParser(grammar, new Lexer(text));
         rdParser.addParseStartListener(() => this.fireParsingStarted());
-        let pn: ParsedNode = rdParser.parse(autocompletions) as ParsedNode;
-        if(pn.getMatcher().state.equals(ParsingState.SUCCESSFUL))
-            pn = rdParser.buildAst(pn) as ParsedNode;
-        return pn;
+        return rdParser.parse(autocompletions) as ParsedNode;
     }
 
     private quantifier(): Rule {
