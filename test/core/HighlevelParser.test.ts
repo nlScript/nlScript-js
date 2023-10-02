@@ -65,7 +65,7 @@ function evaluateHighlevelParser(hlp: Parser, input: string): any {
     const parser: RDParser = new RDParser(hlp.getGrammar().getBNF(), lexer, EBNFParsedNodeFactory.INSTANCE);
     let p: DefaultParsedNode = parser.parse();
     if(p.getMatcher().state !== ParsingState.SUCCESSFUL)
-        throw Error("Parsing failed");
+        throw new Error("Parsing failed");
     p = parser.buildAst(p);
     return p.evaluate();
 }

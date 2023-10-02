@@ -46,7 +46,7 @@ export class Join extends Rule {
         const hasDelimiter: boolean = this.delimiter !== undefined && !this.delimiter.isEpsilon();
 
         if((hasOpen && !hasClose) || (!hasOpen && hasClose))
-            throw Error("Join must have either both open and close or neither");
+            throw new Error("Join must have either both open and close or neither");
 
         if(hasDelimiter) {
             const p: Production = Rule.addProduction(grammar, this, next, this.delimiter as Sym, first);

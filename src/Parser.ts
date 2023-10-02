@@ -204,7 +204,7 @@ export class Parser {
 			const identifier: string = pn.evaluate("type") as string;
 			const entry: Sym | undefined = this.targetGrammar.getSymbol(identifier);
 			if(entry === undefined)
-				throw Error("Could not find " + identifier + " in the target grammar.");
+				throw new Error("Could not find " + identifier + " in the target grammar.");
 
 			const namedEntry: Named<any> = (entry instanceof Terminal)
 					? (entry as Terminal).withName(identifier)
@@ -241,7 +241,7 @@ export class Parser {
 
 			const entry: Sym | undefined = this.targetGrammar.getSymbol(type);
 			if(entry === undefined)
-				throw Error("Could not find " + type + " in the target grammar.");
+				throw new Error("Could not find " + type + " in the target grammar.");
 			
 			const namedEntry: Named<any> = (entry instanceof Terminal)
 					? (entry as Terminal).withName()
@@ -273,7 +273,7 @@ export class Parser {
 					const str: string = pn.getParsedString();
 					const symbol: Sym | undefined = this.targetGrammar.getSymbol(str);
 					if(symbol === undefined)
-						throw Error("Unknown type '" + str + "'");
+						throw new Error("Unknown type '" + str + "'");
 					return symbol;
 				}).withName("type"),
 				this.LIST.withName("list"),

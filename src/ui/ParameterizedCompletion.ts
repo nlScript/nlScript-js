@@ -207,7 +207,7 @@ export class ParameterizedCompletion {
                     i = i + 1;
                 }
                 else {
-                    throw Error("Expected '}' before next '${'");
+                    throw new Error("Expected '}' before next '${'");
                 }
             }
             else if(varName !== undefined && cha === '}') {

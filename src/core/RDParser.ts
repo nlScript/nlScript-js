@@ -57,7 +57,7 @@ class RDParser {
 
     private addAutocompletions(symbolSequence: SymbolSequence, autocompletions: Array<Autocompletion | undefined>): void {
         if(autocompletions === null || autocompletions === undefined)
-            throw Error("autocompletions should be defined at this point");
+            throw new Error("autocompletions should be defined at this point");
         
         if(autocompletions.length > 0 && autocompletions.at(-1) === undefined)
             return;
@@ -173,7 +173,7 @@ class RDParser {
 			let parentSequence: SymbolSequence = childSequence.parent;
 			let productionToCreateChildSequence: Production | undefined = childSequence.production;
 			if(productionToCreateChildSequence === undefined)
-                throw Error("production may not be undefined at this point");
+                throw new Error("production may not be undefined at this point");
 			let pos: number = parentSequence.pos;
 			let rhs: Sym[] = productionToCreateChildSequence.getRight();
 			let lhs: Sym = productionToCreateChildSequence.getLeft();
@@ -190,7 +190,7 @@ class RDParser {
 
 		let root: DefaultParsedNode = parsedNodeSequence[0];
 		if(!root.getSymbol().equals(BNF.ARTIFICIAL_START_SYMBOL))
-            throw Error("");
+            throw new Error("");
 
 		RDParser.notifyExtensionListeners(root);
 
@@ -242,14 +242,14 @@ class SymbolSequence {
     constructor(start: Sym | undefined, parent: SymbolSequence | undefined, production: Production | undefined) {
         if(start !== undefined) {
             if(parent !== undefined || production !== undefined)
-                throw Error("If 'start' is defined, parent and production should be undefined");
+                throw new Error("If 'start' is defined, parent and production should be undefined");
             this.sequence.push(start);
             this.parent = undefined;
             this.production = undefined;
         }
         else {
             if(parent === undefined || production === undefined)
-                throw Error("If 'start' is not defined, parent and production should be defined");
+                throw new Error("If 'start' is not defined, parent and production should be defined");
             this.sequence.push(...parent.sequence);
             this.pos = parent.pos;
             this.parent = parent;
