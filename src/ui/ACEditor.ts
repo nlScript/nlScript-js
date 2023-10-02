@@ -50,7 +50,7 @@ export class ACEditor {
     private createEditorElement(parent: HTMLElement): HTMLElement {
         const el = document.createElement("div");
         el.id = "nls-editor";
-        el.setAttribute("style", "width: 100%; height: 70%; margin-bottom: 3px; border: 1px solid gray;");
+        el.setAttribute("style", "width: 100%; height: 300px; margin-bottom: 3px; border: 1px solid gray; flex-grow: 3;");
         parent.appendChild(el);
         return el;
     }
@@ -58,7 +58,7 @@ export class ACEditor {
     private createOutputElement(parent: HTMLElement): HTMLElement {
         const el = document.createElement("textarea");
         el.id = "nls-output";
-        el.setAttribute("style", "width: 100%; height: 25%; margin-top: 3px; border: 1px solid gray; padding: 0px;");
+        el.setAttribute("style", "width: 100%; height: 100px; margin-top: 3px; border: 1px solid gray; flex-grow: 2; padding: 0px; resize: none;");
         el.setAttribute("readonly", "true");
         parent.appendChild(el);
         return el;
@@ -67,7 +67,7 @@ export class ACEditor {
     private createButton(parent: HTMLElement): HTMLElement {
         const el = document.createElement("button");
         el.id = "nls-run";
-        el.setAttribute("style", "margin-top: 10px; margin-left: auto; margin-right: auto; display: block;");
+        el.setAttribute("style", "margin-top: 10px; margin-left: auto; margin-right: auto; display: block; margin-bottom: 10px;");
         el.setAttribute("type", "button");
         el.innerText = "Run";
         parent.appendChild(el);

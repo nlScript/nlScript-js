@@ -17,6 +17,8 @@ body {
   margin-top: 0;
   margin-bottom: 0;
   font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+  display: flex;
+  flex-direction: column;
 }
 
 h1 {
@@ -30,8 +32,21 @@ h1 {
 #nls-container {
     /* border: 1px solid gray; */
     width: 100%;
-    height: 500px;
+    /* height: 500px; */
     position: relative;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#footer {
+  color: #aeaeae;
+  font-size: small;
+  border-top: #aeaeae solid 1px;
+  text-align: center;
+  margin-top: 30px;
+  display: block;
+  margin-bottom: 10px;
 }
 
 </style>
@@ -44,6 +59,8 @@ h1 {
   <p>This site demonstrates the Natural Language Scripting JavaScript framework</p>
 
   <div id="nls-container"></div>
+
+  <div id="footer">Benjamin Schmid, Optical Imaging Centre Erlangen</div>
 
 
 <script>
