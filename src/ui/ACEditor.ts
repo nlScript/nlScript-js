@@ -131,7 +131,7 @@ export class ACEditor {
     private createEditorElement(parent: HTMLElement): HTMLElement {
         const el = document.createElement("div");
         el.id = "nls-editor";
-        el.setAttribute("style", "width: 100%; height: 300px; margin-bottom: 3px; border: 1px solid gray; flex-grow: 3;");
+        el.setAttribute("style", "width: 100%; height: 300px; margin-bottom: 3px; border: 1px solid gray; flex-grow: 3; overflow: auto;");
         parent.appendChild(el);
         return el;
     }
@@ -139,7 +139,7 @@ export class ACEditor {
     private createOutputElement(parent: HTMLElement): HTMLElement {
         const el = document.createElement("textarea");
         el.id = "nls-output";
-        el.setAttribute("style", "width: 100%; height: 100px; margin-top: 3px; border: 1px solid gray; flex-grow: 2; padding: 0px; resize: none;");
+        el.setAttribute("style", "width: 100%; height: 100px; margin-top: 3px; border: 1px solid gray; flex-grow: 2; padding: 0px; resize: none; overflow: auto;");
         el.setAttribute("readonly", "true");
         parent.appendChild(el);
         return el;
