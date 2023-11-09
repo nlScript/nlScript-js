@@ -57,6 +57,8 @@ export class ErrorHighlight {
 
     setError(i0: number, i1: number): void {
         this.clearError();
+        if(i0 === i1)
+          i1++;
         highlightError(this.tc, i0, i1);
     }
 
