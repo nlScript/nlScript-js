@@ -51,6 +51,22 @@ export class ACEditor {
         // editor.dispatch({selection: {anchor: 8, head: 11}});
     }
 
+    getSelectedLinesStart(): number {
+        const selFrom: number = this.editor.state.selection.main.from;
+        return this.editor.state.doc.lineAt(selFrom).from;
+    }
+
+    getSelectedLinesEnd(): number {
+        const selTo: number = this.editor.state.selection.main.to;
+        return this.editor.state.doc.lineAt(selTo).to;
+    }
+
+    getSelectedLines(): string {
+        const from: number = this.getSelectedLinesStart();
+        const to: number = this.getSelectedLinesEnd();
+        return this.editor.state.sliceDoc(from, to);
+    }
+
     private createEditorElement(parent: HTMLElement): HTMLElement {
         const el = document.createElement("div");
         el.id = "nls-editor";
