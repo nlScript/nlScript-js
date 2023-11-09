@@ -119,8 +119,8 @@ class RDParser {
     }
 
     private addAutocompletions(autocompletingParent: DefaultParsedNode, autocompletions: Array<Autocompletion | undefined>): void {
-        if(autocompletions.length > 0 || autocompletions.at(-1) === undefined)
-            throw new Error("autocompletions should be defined at this point");
+        if(autocompletions.length > 0 && autocompletions.at(-1) === undefined)
+            return;
         
         let autocompletingParentStart: number = autocompletingParent.getMatcher().pos;
         let alreadyEntered: string = this.lexer.substring(autocompletingParentStart);
