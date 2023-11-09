@@ -110,7 +110,6 @@ export class ParameterizedCompletion {
         // iterate over all parameters (ranges)
         let i = 0;
         while(it.value !== null) {
-            console.log("highlight from " + it.from + " to " + it.to);
             if(cursor < it.from || i === ds.size - 1) {
                 this.cycle(i);
                 return;
@@ -127,7 +126,6 @@ export class ParameterizedCompletion {
         // iterate over all parameters (ranges)
         let i = 0;
         while(it.value !== null) {
-            console.log("highlight from " + it.from + " to " + it.to);
             if(cursor <= it.to) {
                 this.cycle(i - 1);
                 return;
@@ -172,7 +170,6 @@ export class ParameterizedCompletion {
     }
 
     handleKeyEvent(event: KeyboardEvent): void {
-        console.log("ParameterizedCompletion.handleKeyEvent");
         if(this.tc.state.field(highlight_extension).size == 0) {
             this.cancel();
             return;
