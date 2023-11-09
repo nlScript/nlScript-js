@@ -1,6 +1,5 @@
 import { Parser } from "./Parser";
 import { ACEditor } from "./ui/ACEditor";
-import { makeMicroscopeParser } from "./ui/Microscope";
 
 export * from "./core/index";
 export * from "./ebnf/index";
