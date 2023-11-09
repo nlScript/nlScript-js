@@ -98,12 +98,12 @@ export class ACEditor {
             return;
         const selection = this.editor.state.selection;
         const caret = selection.main.head;
-        
+
+        const entireText: string = this.editor.state.doc.toString();
+        const cursorIsAtEnd: boolean = caret === entireText.length || entireText.substring(caret).trim().length == 0;
+
         if(selection.main.empty)
             this.editor.dispatch({selection: { anchor: caret, head: caret - this.completer.completionPrefix().length }})
-
-        console.log(this.editor.state.selection.main.anchor);
-        console.log(this.editor.state.selection.main.head);
 
         if(completion.indexOf("${") >= 0) {
             this.cancelParameterizedCompletion();
@@ -112,10 +112,10 @@ export class ACEditor {
             this.parameterizedCompletion.replaceSelection(completion);
         }
         else {
-            this.cancelParameterizedCompletion();
             this.editor.dispatch(this.editor.state.replaceSelection(completion));
             this.completer.hidePopup();
-            this.autocomplete();
+            if(cursorIsAtEnd)
+                this.autocomplete();
         }
     }
 
@@ -182,7 +182,6 @@ export class ACEditor {
         const entireText: string = this.editor.state.doc.toString();
         const anchor: number = this.editor.state.selection.main.anchor;
         const cursorIsAtEnd: boolean = anchor === entireText.length || entireText.substring(anchor).trim().length == 0;
-        autoinsertSingleOption = autoinsertSingleOption && cursorIsAtEnd;
 
         const textToCursor: string = entireText.substring(0, anchor);
         this.errorHighlight?.clearError();
@@ -228,5 +227,4 @@ export class ACEditor {
         }
     }
 }
-
 
