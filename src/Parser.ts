@@ -10,7 +10,6 @@ import { RDParser } from "./core/RDParser";
 import { Sym } from "./core/Symbol";
 import { Terminal } from "./core/Terminal";
 import { EBNF } from "./ebnf/EBNF";
-import { EBNFCore } from "./ebnf/EBNFCore";
 import { EBNFParsedNodeFactory } from "./ebnf/EBNFParsedNodeFactory";
 import { EBNFParser, ParseStartListener } from "./ebnf/EBNFParser";
 import { NamedRule } from "./ebnf/NamedRule";
@@ -66,7 +65,7 @@ export class Parser {
         return this.grammar;
     }
 
-    getTargetGrammar(): EBNFCore {
+    getTargetGrammar(): EBNF {
         return this.targetGrammar;
     }
 
