@@ -66,18 +66,34 @@ class RDParser {
     }
 
     private collectAutocompletions(endOfInput: SymbolSequence[], autocompletions: Autocompletion[]): void {
-        for(const seq of endOfInput) {
-            this.addAutocompletions(seq, autocompletions);
+        if(autocompletions === null || autocompletions === undefined)
+            throw new Error("autocompletions should be defined at this point");
+
+        const autocompletingParents: DefaultParsedNode[] = [];
+        for (const seq of endOfInput) {
+            this.collectAutocompletingParents(seq, autocompletingParents);
+        }
+
+        const done: Set<string> = new Set();
+        for(const autocompletingParent of autocompletingParents) {
+            const prod = autocompletingParent.getProduction();
+            let key: string;
+            if(prod !== undefined) {
+                key = prod.getLeft().getSymbol() + ":";
+                for(const s of prod.getRight())
+                    key += s.getSymbol();
+            }
+            else {
+                key = autocompletingParent.getSymbol().getSymbol();
+            }
+            if(!done.has(key)) {
+                this.addAutocompletions(autocompletingParent, autocompletions);
+                done.add(key);
+            }
         }
     }
 
-    private addAutocompletions(symbolSequence: SymbolSequence, autocompletions: Array<Autocompletion | undefined>): void {
-        if(autocompletions === null || autocompletions === undefined)
-            throw new Error("autocompletions should be defined at this point");
-        
-        if(autocompletions.length > 0 && autocompletions.at(-1) === undefined)
-            return;
-        
+    private collectAutocompletingParents(symbolSequence: SymbolSequence, autocompletingParents: Array<DefaultParsedNode>): void {
         let last: DefaultParsedNode[] = [];
         this.createParsedTree(symbolSequence, last);
 
@@ -98,8 +114,13 @@ class RDParser {
                 break;
             }
         }
-        if(autocompletingParent === undefined)
-            return;
+        if(autocompletingParent !== undefined)
+            autocompletingParents.push(autocompletingParent);
+    }
+
+    private addAutocompletions(autocompletingParent: DefaultParsedNode, autocompletions: Array<Autocompletion | undefined>): void {
+        if(autocompletions.length > 0 || autocompletions.at(-1) === undefined)
+            throw new Error("autocompletions should be defined at this point");
         
         let autocompletingParentStart: number = autocompletingParent.getMatcher().pos;
         let alreadyEntered: string = this.lexer.substring(autocompletingParentStart);
