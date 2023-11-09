@@ -43,11 +43,11 @@ class DefaultParsedNode {
     }
 
     doesAutocomplete(): boolean {
-        let autocompletion: string | undefined = this.getAutocompletion();
+        let autocompletion: string | undefined = this.getAutocompletion(true);
         return autocompletion !== null && autocompletion !== undefined;
     }
 
-    getAutocompletion(): string | undefined {
+    getAutocompletion(_justCheck: boolean): string | undefined {
         if(this.symbol === null || this.symbol === undefined)
             return undefined;
         

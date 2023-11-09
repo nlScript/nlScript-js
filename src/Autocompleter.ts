@@ -11,7 +11,7 @@ import { Rule } from "./ebnf/Rule";
 import { Sequence } from "./ebnf/Sequence";
 
 interface Autocompleter {
-    getAutocompletion(n: ParsedNode): string | undefined;
+    getAutocompletion(n: ParsedNode, justCheck: boolean): string | undefined;
 }
 
 class IfNothingYetEnteredAutocompleter implements Autocompleter {
@@ -21,7 +21,7 @@ class IfNothingYetEnteredAutocompleter implements Autocompleter {
         this.completion = completion;
     }
 
-    getAutocompletion(pn: ParsedNode) : string {
+    getAutocompletion(pn: ParsedNode, _justCheck: boolean) : string {
         return pn.getParsedString().length == 0 ? this.completion : "";
     }
 }
@@ -37,11 +37,14 @@ class EntireSequenceCompleter implements Autocompleter {
         this.symbol2Autocompletion = symbol2Autocompletion;
     }
 
-    getAutocompletion(pn: ParsedNode): string | undefined {
+    getAutocompletion(pn: ParsedNode, justCheck: boolean): string | undefined {
         const alreadyEntered: string = pn.getParsedString();
         if(alreadyEntered.length > 0)
             return undefined;
         
+        if(justCheck)
+            return Autocompleter.DOES_AUTOCOMPLETE;
+
         let autocompletionString: string = "";
 
         const sequence: Rule = pn.getRule() as Rule;
@@ -83,8 +86,10 @@ class EntireSequenceCompleter implements Autocompleter {
 module Autocompleter {
     export const VETO: string = 'VETO';
 
+    export const DOES_AUTOCOMPLETE = "DOES_AUTOCOMPLETE";
+
     export const DEFAULT_INLINE_AUTOCOMPLETER: Autocompleter = {
-        getAutocompletion(pn: ParsedNode): string | undefined {
+        getAutocompletion(pn: ParsedNode, _justCheck: boolean): string | undefined {
             let alreadyEntered = pn.getParsedString();
             if(alreadyEntered.length > 0)
                 return VETO;

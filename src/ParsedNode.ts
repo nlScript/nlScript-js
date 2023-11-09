@@ -46,12 +46,12 @@ class ParsedNode extends DefaultParsedNode {
         return thisRule === parentRule;
     }
 
-    getAutocompletion(): string | undefined {
+    getAutocompletion(justCheck: boolean): string | undefined {
         let rule: Rule | undefined = this.getRule();
         if(rule !== undefined && rule.getAutocompleter() !== undefined && !this.parentHasSameRule()) {
-            return rule.getAutocompleter().getAutocompletion(this);
+            return rule.getAutocompleter().getAutocompletion(this, justCheck);
         }
-        return super.getAutocompletion();
+        return super.getAutocompletion(justCheck);
     }
 
     notifyListeners(): void {

@@ -1,4 +1,4 @@
-import { IfNothingYetEnteredAutocompleter } from "../Autocompleter";
+import { Autocompleter, IfNothingYetEnteredAutocompleter } from "../Autocompleter";
 import { Named } from "../core/Named";
 import { BNF } from "../core/BNF";
 import { NonTerminal } from "../core/NonTerminal";
@@ -135,14 +135,16 @@ export class EBNFCore {
 
     tuple(type: string | undefined, child: Named<any>, ...names: string[]): Rule {
         const wsStar: NamedRule = this.star(undefined, Terminal.WHITESPACE.withName()).withName("ws*");
-        wsStar.get().setAutocompleter({getAutocompletion: _n => ""});
+        wsStar.get().setAutocompleter({getAutocompletion: (_n, _justCheck) => ""});
         const open: Sym      = this.sequence(undefined, Terminal.literal("(").withName("open"), wsStar).getTarget();
         const close: Sym     = this.sequence(undefined, wsStar, Terminal.literal(")").withName("close")).getTarget();
         const delimiter: Sym = this.sequence(undefined, wsStar, Terminal.literal(",").withName("delimiter"), wsStar).getTarget();
         const ret: Rule = this.join(type, child, open, close, delimiter, true, names);
-        ret.setAutocompleter({getAutocompletion: pn => {
+        ret.setAutocompleter({getAutocompletion: (pn, justCheck) => {
             if(pn.getParsedString().length > 0)
                 return undefined;
+            if(justCheck)
+                return Autocompleter.DOES_AUTOCOMPLETE;
             let sb = "(";
             const rule: Join = pn.getRule() as Join;
             sb += "${" + rule.getNameForChild(0) + "}";

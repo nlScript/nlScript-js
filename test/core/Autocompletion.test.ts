@@ -27,7 +27,7 @@ function makeGrammar(): BNF {
                 Terminal.literal("two").withName(),
                 Terminal.literal("three").withName(),
                 Terminal.literal("four").withName()
-            ).setAutocompleter({getAutocompletion: pn => {
+            ).setAutocompleter({getAutocompletion: (pn, _justCheck) => {
                 if(pn.getParsedString().length > 0)
                     return Autocompleter.VETO;
                 return "${" + pn.getName() + "}";
@@ -118,7 +118,7 @@ function test05(): void {
             definedChannels.push(p.getParsedString("channel-name"));
         }
     );
-    parser.defineType("defined-channels", "'{channel:[A-Za-z0-9]:+}'", _pn => undefined, { getAutocompletion: _pn => definedChannels.join(";;;")} );
+    parser.defineType("defined-channels", "'{channel:[A-Za-z0-9]:+}'", _pn => undefined, { getAutocompletion: (_pn, _justCheck) => definedChannels.join(";;;")} );
 
     parser.defineSentence("Use channel {channel:defined-channels}.", _e => undefined);
 
@@ -167,17 +167,17 @@ function test06(): void {
 function test07(): void {
     const parser: Parser = new Parser();
 
-    parser.defineType("led", "385nm", () => undefined, { getAutocompletion: () => "385nm" });
-    parser.defineType("led", "470nm", () => undefined, { getAutocompletion: () => "470nm" });
-    parser.defineType("led", "567nm", () => undefined, { getAutocompletion: () => "567nm" });
-    parser.defineType("led", "625nm", () => undefined, { getAutocompletion: () => "625nm" });
+    parser.defineType("led", "385nm", () => undefined, { getAutocompletion: (_e, _justCheck) => "385nm" });
+    parser.defineType("led", "470nm", () => undefined, { getAutocompletion: (_e, _justCheck) => "470nm" });
+    parser.defineType("led", "567nm", () => undefined, { getAutocompletion: (_e, _justCheck) => "567nm" });
+    parser.defineType("led", "625nm", () => undefined, { getAutocompletion: (_e, _justCheck) => "625nm" });
 
-    parser.defineType("led-power", "{<led-power>:int}%", () => undefined, true);
-    parser.defineType("led-setting", "{led-power:led-power} at {wavelength:led}", () => undefined, true);
+    parser.defineType("led-power", "{<led-power>:int}%", (_e) => undefined, true);
+    parser.defineType("led-setting", "{led-power:led-power} at {wavelength:led}", (_e) => undefined, true);
 
     parser.defineSentence(
             "Excite with {led-setting:led-setting}.",
-            () => undefined);
+            (_e) => undefined);
 
     const autocompletions: Autocompletion[] = [];
     const root: ParsedNode = parser.parse("Excite with 10% at 3", autocompletions);

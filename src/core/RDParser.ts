@@ -103,7 +103,7 @@ class RDParser {
         
         let autocompletingParentStart: number = autocompletingParent.getMatcher().pos;
         let alreadyEntered: string = this.lexer.substring(autocompletingParentStart);
-        let completion: string | undefined = autocompletingParent.getAutocompletion();
+        let completion: string | undefined = autocompletingParent.getAutocompletion(false);
         if(completion !== undefined && completion.length > 0) {
             for(let c of completion.split(";;;")) {
                 if(c === Autocompleter.VETO) {
