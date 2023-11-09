@@ -23,13 +23,19 @@ export class ACEditor {
 
     private readonly completer: ACCompleter;
 
+    private onRun: () => void = () => this.run();
+
+    private beforeRun: () => void = () => {};
+
+    private afterRun: () => void = () => {};
+
     constructor(parser: Parser, parent: HTMLElement) {
         this.parser = parser;
         const that = this;
         const editorElement = this.createEditorElement(parent);
         this.outputElement = this.createOutputElement(parent);
         const runButton = this.createButton(parent);
-        runButton.onclick = () => that.run();
+        runButton.onclick = () => that.onRun();
         this.editor = new EditorView({
             extensions: [],
             parent: editorElement
@@ -45,7 +51,7 @@ export class ACEditor {
                 basicSetup,
                 highlight_extension,
                 error_highlight_extension,
-            ])
+            ]),
         });
         // editor.dispatch(editor.state.replaceSelection("hahahahahah "));
         // editor.dispatch({selection: {anchor: 8, head: 11}});
@@ -65,6 +71,18 @@ export class ACEditor {
         const from: number = this.getSelectedLinesStart();
         const to: number = this.getSelectedLinesEnd();
         return this.editor.state.sliceDoc(from, to);
+    }
+
+    setOnRun(onRun: () => void) {
+        this.onRun = onRun;
+    }
+
+    setBeforeRun(beforeRun: () => void) {
+        this.beforeRun = beforeRun;
+    }
+
+    setAfterRun(afterRun: () => void) {
+        this.afterRun = afterRun;
     }
 
     private createEditorElement(parent: HTMLElement): HTMLElement {
@@ -94,13 +112,16 @@ export class ACEditor {
         return el;
     }
 
-    run(): void {
+    run(selectedLinesOnly: boolean = false): void {
         console.debug("running");
         this.outputElement.textContent = "";
         const entireText: string = this.editor.state.doc.toString();
         try {
-            const pn: ParsedNode = this.parser.parse(entireText);
+            this.beforeRun();
+            const textToEvaluate: string = selectedLinesOnly ? this.getSelectedLines() : entireText;
+            const pn: ParsedNode = this.parser.parse(textToEvaluate);
             pn.evaluate();
+            this.afterRun();
         } catch(e: any) {
             if(e instanceof Error)
                 this.outputElement.textContent = (e as Error).message;
