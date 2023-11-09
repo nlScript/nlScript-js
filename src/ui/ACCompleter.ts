@@ -49,6 +49,7 @@ export class ACCompleter {
             activateOnTyping: false,
             defaultKeymap: false,
             interactionDelay: 0,
+            closeOnBlur: false,
             override: [getCompletionsFn],
             addToOptions: [{
                 render: render,
