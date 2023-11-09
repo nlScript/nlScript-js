@@ -91,6 +91,7 @@ export class ACEditor {
                 }),
                 this.completer.autocompletionExtension,
                 basicSetup,
+                EditorView.lineWrapping,
                 highlight_extension,
                 error_highlight_extension,
             ]),
