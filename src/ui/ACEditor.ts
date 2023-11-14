@@ -261,7 +261,6 @@ export class ACEditor {
     autocomplete(autoinsertSingleOption: boolean = true) {
         const entireText: string = this.editor.state.doc.toString();
         const anchor: number = this.editor.state.selection.main.anchor;
-        const cursorIsAtEnd: boolean = anchor === entireText.length || entireText.substring(anchor).trim().length == 0;
 
         const textToCursor: string = entireText.substring(0, anchor);
         this.errorHighlight?.clearError();
