@@ -245,6 +245,10 @@ export class ACEditor {
         }
 
         if(this.parameterizedCompletion) {
+            if(e.key === "Escape") {
+                this.cancelParameterizedCompletion();
+                return true;
+            }
             this.parameterizedCompletion.handleKeyEvent(e);
             if(e.defaultPrevented)
                 return true;

@@ -183,10 +183,6 @@ export class ParameterizedCompletion {
                 this.next();
             }
         }
-        else if (event.key === "Escape") {
-            event.preventDefault();
-            this.cancel();
-        }
     }
 
     static parseParameters(paramString: string, ret: ParsedParam[]): string {
