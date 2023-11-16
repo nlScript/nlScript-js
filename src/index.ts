@@ -1,9 +1,11 @@
 import { Parser } from "./Parser";
 import { ACEditor } from "./ui/ACEditor";
+import { makeMicroscopeParser } from "./microscope/LanguageControl";
 
 export * from "./core/index";
 export * from "./ebnf/index";
 export * from "./util/index";
+export * from "./microscope/index";
 export * from "./ui/index";
 export * from "./Autocompleter";
 export * from "./Evaluator";
