@@ -254,7 +254,10 @@ export class Parser {
 		return this.grammar.sequence("character-class",
 				Terminal.literal("[").withName(),
 				this.grammar.plus(undefined,
-						Terminal.characterClass("[^]]").withName()
+					this.grammar.or(undefined,
+						Terminal.characterClass("[^]]").withName(),
+						Terminal.literal("\\]").withName()
+					).withName()
 				).withName("plus"),
 				Terminal.literal("]").withName()
 		).setEvaluator(pn => {
