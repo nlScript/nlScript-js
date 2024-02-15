@@ -17,6 +17,7 @@ import { Rule } from "../../src/ebnf/Rule";
 import { Star } from "../../src/ebnf/Star";
 import { IntRange } from "../../src/util/IntRange";
 import { ParseException } from "../../src/ParseException";
+import { Join } from "../../src/ebnf/Join";
 
 
 function evaluate(grammar: EBNF, input: string): any {
@@ -80,11 +81,11 @@ function testList(): void {
     grammar.compile(hlp.LIST.getTarget());
 
     const test: string = "list<int>";
-    const list: NonTerminal = evaluateHighlevelParser(hlp, test) as NonTerminal;
+    const list: Join = evaluateHighlevelParser(hlp, test) as Join;
 
     // now parse and evaluate the generated grammar
     const tgt: EBNFCore = hlp.getTargetGrammar();
-    tgt.compile(list);
+    tgt.compile(list.getTarget());
     const rdParser: RDParser = new RDParser(tgt.getBNF(), new Lexer("1, 2, 3"), EBNFParsedNodeFactory.INSTANCE);
     const pn: DefaultParsedNode = rdParser.parse();
     expect(pn.getMatcher().state).toBe(ParsingState.SUCCESSFUL);
@@ -149,11 +150,11 @@ function testType(): void {
     const grammar2: EBNF = hlp2.getGrammar();
     grammar2.compile(hlp2.TYPE.getTarget());
     const test2: string = "list<int>";
-    const list: NonTerminal = evaluateHighlevelParser(hlp2, test2);
+    const list: Join = evaluateHighlevelParser(hlp2, test2) as Join;
 
     // now parse and evaluate the generated grammar:
     const tgt2 = hlp2.getTargetGrammar();
-    tgt2.compile(list);
+    tgt2.compile(list.getTarget());
     const rdParser2: RDParser = new RDParser(tgt2.getBNF(), new Lexer("1, 2, 3"), EBNFParsedNodeFactory.INSTANCE);
     const pn2: DefaultParsedNode = rdParser2.parse();
     expect(pn2.getMatcher().state).toBe(ParsingState.SUCCESSFUL);
