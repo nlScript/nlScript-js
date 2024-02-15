@@ -196,7 +196,7 @@ class RDParser {
             let symbol: Sym = leafSequence.sequence[i];
 			let matcher: Matcher = i < nParsedMatchers
 					? leafSequence.parsedMatchers[i]
-					: new Matcher(ParsingState.NOT_PARSED, 0, "");
+					: new Matcher(ParsingState.NOT_PARSED, 0, "");  // TODO maybe this should not be 0
 
 			let pn: DefaultParsedNode = this.parsedNodeFactory.createNode(matcher, symbol, undefined);
 			parsedNodeSequence.push(pn);
