@@ -274,7 +274,7 @@ export class Parser {
 					return symbol;
 				}).withName("type"),
 				this.LIST.withName("list"),
-				this.TUPLE.withName("tupe"),
+				this.TUPLE.withName("tuple"),
 				this.CHARACTER_CLASS.withName("character-class")
 		);
 	}
