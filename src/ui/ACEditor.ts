@@ -284,9 +284,12 @@ export class ACEditor {
                 throw e;
         }
 
-        if(autocompletions.length === 1 && autoinsertSingleOption) {
-            this.completer.setCompletions(autocompletions);
-            this.insertCompletion(autocompletions[0].getCompletion());
+        if(autocompletions.length === 1) {
+            if(autoinsertSingleOption || autocompletions[0].getCompletion().indexOf("${") === undefined) {
+                this.completer.setCompletions(autocompletions);
+                this.insertCompletion(autocompletions[0].getCompletion());
+                this.completer.hidePopup();
+            }
         }
         else if(autocompletions.length > 1) {
             this.completer.setCompletions(autocompletions);
