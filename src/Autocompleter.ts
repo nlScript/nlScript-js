@@ -39,8 +39,8 @@ class EntireSequenceCompleter implements Autocompleter {
 
     getAutocompletion(pn: ParsedNode, justCheck: boolean): string | undefined {
         const alreadyEntered: string = pn.getParsedString();
-        if(alreadyEntered.length > 0)
-            return undefined;
+        // if(alreadyEntered.length > 0)
+        //     return Autocompleter.VETO;
         
         if(justCheck)
             return Autocompleter.DOES_AUTOCOMPLETE;
@@ -79,6 +79,9 @@ class EntireSequenceCompleter implements Autocompleter {
             this.symbol2Autocompletion.set(key, autocompletionStringForChild as string);
             autocompletionString += autocompletionStringForChild;
         }
+        const idx: number = autocompletionString.indexOf("${");
+        if(idx !== undefined && alreadyEntered.length > idx)
+            return Autocompleter.VETO;
         return autocompletionString;
     }
 }
