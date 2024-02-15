@@ -17,6 +17,7 @@ import { Rule } from "./ebnf/Rule";
 import { Evaluator } from "./Evaluator";
 import { IntRange } from "./util/IntRange";
 import { BNF } from "./core/BNF";
+import { Join } from "./ebnf/Join";
 
 export class Parser {
 
@@ -187,6 +188,7 @@ export class Parser {
 		return this.identifier("entry-name");
 	}
 
+	// evaluates to the target grammar's list rule (i.e. Join).
     private list(): Rule {
         const g: EBNF = this.grammar;
 		return g.sequence("list",
@@ -206,7 +208,7 @@ export class Parser {
 			const namedEntry: Named<any> = (entry instanceof Terminal)
 					? (entry as Terminal).withName(identifier)
 					: (entry as NonTerminal).withName(identifier);
-			return this.targetGrammar.list(undefined, namedEntry).getTarget();
+			return this.targetGrammar.list(undefined, namedEntry);
         });
 	}
 
@@ -305,6 +307,21 @@ export class Parser {
 		).setEvaluator(pn => {
 			const variableName: string = pn.evaluate("variable-name") as string;
 			const typeObject: any = pn.evaluate("opt-type", "seq-type", "type");
+			const quantifierObject: any = pn.evaluate("opt-quantifier", "seq-quantifier", "quantifier");
+
+			// typeObject is either
+			// - a type (symbol) from the target grammar, or
+			// - a character-class (i.e. a terminal), or
+			// - a tuple (i.e. symbol of the tuple in the target grammar), or
+			// - a list (i.e. a Rule, or more specifically a Join).
+			if(typeObject instanceof Join) {
+				const join: Join = typeObject as Join;
+				if(quantifierObject != null)
+					join.setCardinality(quantifierObject as IntRange);
+				return join.getTarget().withName(variableName);
+			}
+
+
 			let symbol: Sym = typeObject === undefined
 					? Terminal.literal(variableName)
 					: typeObject as Sym;
@@ -313,7 +330,6 @@ export class Parser {
 					? (symbol as Terminal).withName(variableName)
 					: (symbol as NonTerminal).withName(variableName);
 
-			const quantifierObject: any = pn.evaluate("opt-quantifier", "seq-quantifier", "quantifier");
 			if(quantifierObject !== undefined) {
 				const range: IntRange = quantifierObject as IntRange;
 				     if(range.equals(IntRange.STAR))     symbol = this.targetGrammar.star(    undefined, namedSymbol).getTarget();

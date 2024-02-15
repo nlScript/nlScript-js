@@ -14,7 +14,7 @@ export class Join extends Rule {
     private readonly open: Sym | undefined;
     private readonly close: Sym | undefined;
     private readonly delimiter: Sym | undefined;
-    private readonly cardinality: IntRange;
+    private cardinality: IntRange;
     private onlyKeepEntries: boolean = true;
 
     constructor(tgt: NonTerminal | undefined, entry: Sym, open: Sym | undefined, close: Sym | undefined, delimiter: Sym | undefined, cardinality: IntRange) {
@@ -32,6 +32,10 @@ export class Join extends Rule {
 
     getCardinality(): IntRange {
         return this.cardinality;
+    }
+
+    setCardinality(cardinality: IntRange): void {
+        this.cardinality = cardinality;
     }
 
     setOnlyKeepEntries(onlyKeepEntries: boolean): void {
