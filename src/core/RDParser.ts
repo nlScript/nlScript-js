@@ -244,7 +244,7 @@ class RDParser {
     }
 
     private static matcherFromChildSequence(children: DefaultParsedNode[]): Matcher {
-        const pos = children.length > 0 ? children[0].getMatcher().pos : 0;
+        let pos = -1;
         let state = ParsingState.NOT_PARSED;
         let parsed = "";
         for(let child of children) {
@@ -255,11 +255,15 @@ class RDParser {
             const matcher = child.getMatcher();
             const childState = matcher.state;
             if(!childState.equals(ParsingState.NOT_PARSED)) {
+                if(pos === -1)
+                    pos = matcher.pos; // parent pos is the pos of the first child which is not NOT_PARSED
                 if(state.equals(ParsingState.NOT_PARSED) || !childState.isBetterThan(state))
                 state = childState;
             }
             parsed = parsed + matcher.parsed;
         }
+        if(pos === -1)
+            pos = 0;
         return new Matcher(state, pos, parsed);
     }
 }
@@ -323,7 +327,7 @@ class SymbolSequence {
         let ret: string = "";
         let i = 0;
         for(let sym of this.sequence) {
-            if(i++ == this.pos)
+            if(i++ === this.pos)
                 ret += "."
             ret += sym + " -- "
         }
