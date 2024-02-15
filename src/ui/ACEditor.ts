@@ -170,6 +170,7 @@ export class ACEditor {
                 this.outputElement.textContent = (e as Error).message;
             else
                 this.outputElement.textContent = e.toString();
+            (console.error || console.log).call(console, e.stack || e);
         }
     }
 
