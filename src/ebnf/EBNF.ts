@@ -13,6 +13,7 @@ export class EBNF extends EBNFCore {
     static readonly INTEGER_NAME        : string = "int";
 	static readonly FLOAT_NAME          : string = "float";
     static readonly MONTH_NAME          : string = "month";
+    static readonly WEEKDAY_NAME        : string = "weekday";
 	static readonly WHITESPACE_STAR_NAME: string = "whitespace-star";
 	static readonly WHITESPACE_PLUS_NAME: string = "whitespace-plus";
 	static readonly INTEGER_RANGE_NAME  : string = "integer-range";
@@ -26,6 +27,7 @@ export class EBNF extends EBNFCore {
 	readonly INTEGER: Rule;
 	readonly FLOAT: Rule;
     readonly MONTH: Rule;
+    readonly WEEKDAY: Rule;
 	readonly WHITESPACE_STAR: Rule;
 	readonly WHITESPACE_PLUS: Rule;
 	readonly INTEGER_RANGE: Rule;
@@ -41,6 +43,7 @@ export class EBNF extends EBNFCore {
         this.INTEGER         = this.makeInteger();
 		this.FLOAT           = this.makeFloat();
         this.MONTH           = this.makeMonth();
+        this.WEEKDAY         = this.makeWeekday();
 		this.WHITESPACE_STAR = this.makeWhitespaceStar();
 		this.WHITESPACE_PLUS = this.makeWhitespacePlus();
 		this.INTEGER_RANGE   = this.makeIntegerRange();
@@ -200,6 +203,18 @@ export class EBNF extends EBNFCore {
             this.sequence(undefined, Terminal.literal("October")  .withName()).setEvaluator(_pn =>  9).withName("october"),
             this.sequence(undefined, Terminal.literal("November") .withName()).setEvaluator(_pn => 10).withName("november"),
             this.sequence(undefined, Terminal.literal("December") .withName()).setEvaluator(_pn => 11).withName("december"),
+            );
+    }
+
+    private makeWeekday(): Rule {
+        return this.or(EBNF.WEEKDAY_NAME,
+            this.sequence(undefined, Terminal.literal("Monday")   .withName()).setEvaluator(_pn =>  0).withName("monday"),
+            this.sequence(undefined, Terminal.literal("Tuesday")  .withName()).setEvaluator(_pn =>  1).withName("tuesday"),
+            this.sequence(undefined, Terminal.literal("Wednesday").withName()).setEvaluator(_pn =>  2).withName("wednesday"),
+            this.sequence(undefined, Terminal.literal("Thursday") .withName()).setEvaluator(_pn =>  3).withName("thursday"),
+            this.sequence(undefined, Terminal.literal("Friday")   .withName()).setEvaluator(_pn =>  4).withName("friday"),
+            this.sequence(undefined, Terminal.literal("Saturday") .withName()).setEvaluator(_pn =>  5).withName("saturday"),
+            this.sequence(undefined, Terminal.literal("Sunday")   .withName()).setEvaluator(_pn =>  6).withName("sunday"),
             );
     }
 
