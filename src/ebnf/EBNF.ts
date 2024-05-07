@@ -6,6 +6,7 @@ import { Rule } from "./Rule";
 
 export class EBNF extends EBNFCore {
 
+    static readonly DIGIT_NAME          : string = "digit";
     static readonly LETTER_NAME         : string = "letter";
     static readonly SIGN_NAME           : string = "sign";
     static readonly INTEGER_NAME        : string = "int";
@@ -17,6 +18,7 @@ export class EBNF extends EBNFCore {
 	static readonly TIME_NAME           : string = "time";
 	static readonly COLOR_NAME          : string = "color";
 
+    readonly DIGIT: Rule;
     readonly LETTER: Rule;
     readonly SIGN: Rule;
 	readonly INTEGER: Rule;
@@ -30,6 +32,7 @@ export class EBNF extends EBNFCore {
 
     constructor() {
         super();
+        this.DIGIT           = this.makeDigit();
         this.LETTER          = this.makeLetter();
         this.SIGN            = this.makeSign();
         this.INTEGER         = this.makeInteger();
@@ -67,6 +70,13 @@ export class EBNF extends EBNFCore {
 
     private makeLetter(): Rule {
         const ret: Rule = this.sequence(EBNF.LETTER_NAME, Terminal.LETTER.withName());
+        ret.setEvaluator(pn => pn.getParsedString().charAt(0));
+        ret.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
+        return ret;
+    }
+
+    private makeDigit(): Rule {
+        const ret: Rule = this.sequence(EBNF.DIGIT_NAME, Terminal.DIGIT.withName());
         ret.setEvaluator(pn => pn.getParsedString().charAt(0));
         ret.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
         return ret;

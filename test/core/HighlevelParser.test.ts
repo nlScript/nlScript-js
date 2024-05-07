@@ -180,6 +180,7 @@ function testType(): void {
 }
 
 function testVariable(): void {
+    console.log("test variable");
     const hlp: Parser = new Parser();
     const grammar: EBNF = hlp.getGrammar();
     grammar.compile(hlp.VARIABLE.getTarget());
@@ -194,10 +195,11 @@ function testVariable(): void {
     expect(repeat.getTo()).toBe(5);
     expect(repeat.getEntry().getSymbol()).toBe(EBNF.INTEGER_NAME);
 
+    let evaluatedTerminal: Named<Terminal>;
     test = "{blubb:digit}";
-    let evaluatedTerminal: Named<Terminal> = evaluateHighlevelParser(hlp, test);
-    expect(evaluatedTerminal.getName()).toBe("blubb");
-    expect(evaluatedTerminal.getSymbol()).toEqual(Terminal.DIGIT);
+    evaluatedNonTerminal = evaluateHighlevelParser(hlp, test);
+    expect(evaluatedNonTerminal.getName()).toBe("blubb");
+    expect(evaluatedNonTerminal.getSymbol().getSymbol()).toEqual(EBNF.DIGIT_NAME);
 
     test = "{blubb:int:*}";
     evaluatedNonTerminal = evaluateHighlevelParser(hlp, test);
