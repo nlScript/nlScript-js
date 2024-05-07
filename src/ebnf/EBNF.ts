@@ -6,6 +6,7 @@ import { Rule } from "./Rule";
 
 export class EBNF extends EBNFCore {
 
+    static readonly LETTER_NAME         : string = "letter";
     static readonly SIGN_NAME           : string = "sign";
     static readonly INTEGER_NAME        : string = "int";
 	static readonly FLOAT_NAME          : string = "float";
@@ -16,6 +17,7 @@ export class EBNF extends EBNFCore {
 	static readonly TIME_NAME           : string = "time";
 	static readonly COLOR_NAME          : string = "color";
 
+    readonly LETTER: Rule;
     readonly SIGN: Rule;
 	readonly INTEGER: Rule;
 	readonly FLOAT: Rule;
@@ -28,6 +30,7 @@ export class EBNF extends EBNFCore {
 
     constructor() {
         super();
+        this.LETTER          = this.makeLetter();
         this.SIGN            = this.makeSign();
         this.INTEGER         = this.makeInteger();
 		this.FLOAT           = this.makeFloat();
@@ -55,9 +58,16 @@ export class EBNF extends EBNFCore {
         // int -> (-|+)?digit+
 		const ret: Rule = this.sequence(EBNF.INTEGER_NAME,
             this.optional(undefined, this.SIGN.withName("sign")).withName("optional"),
-            this.plus(undefined, Terminal.DIGIT.withName()).withName("plus")
+            this.plus(undefined, Terminal.DIGIT.withName("digit")).withName("plus")
         );
         ret.setEvaluator(pn => parseInt(pn.getParsedString()));
+        ret.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
+        return ret;
+    }
+
+    private makeLetter(): Rule {
+        const ret: Rule = this.sequence(EBNF.LETTER_NAME, Terminal.LETTER.withName());
+        ret.setEvaluator(pn => pn.getParsedString().charAt(0));
         ret.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
         return ret;
     }
