@@ -37,7 +37,7 @@ class EntireSequenceCompleter implements Autocompleter {
         this.symbol2Autocompletion = symbol2Autocompletion;
     }
 
-    getAutocompletion(pn: ParsedNode, justCheck: boolean): string | undefined {
+    getAutocompletion(pn: ParsedNode, _justCheck: boolean): string | undefined {
         const alreadyEntered: string = pn.getParsedString();
         // if(alreadyEntered.length > 0)
         //     return Autocompleter.VETO;
