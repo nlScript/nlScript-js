@@ -42,8 +42,8 @@ class EntireSequenceCompleter implements Autocompleter {
         // if(alreadyEntered.length > 0)
         //     return Autocompleter.VETO;
         
-        if(justCheck)
-            return Autocompleter.DOES_AUTOCOMPLETE;
+        // if(justCheck)
+        //     return Autocompleter.DOES_AUTOCOMPLETE;
 
         let autocompletionString: string = "";
 
@@ -81,7 +81,7 @@ class EntireSequenceCompleter implements Autocompleter {
         }
         const idx: number = autocompletionString.indexOf("${");
         if(idx !== undefined && alreadyEntered.length > idx)
-            return Autocompleter.VETO;
+            return undefined;
         return autocompletionString;
     }
 }
