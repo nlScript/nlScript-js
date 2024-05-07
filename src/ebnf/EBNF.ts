@@ -1,5 +1,5 @@
 import { ParsedNode } from "src/ParsedNode";
-import { Autocompleter, IfNothingYetEnteredAutocompleter } from "../Autocompleter";
+import { Autocompleter, EntireSequenceCompleter, IfNothingYetEnteredAutocompleter } from "../Autocompleter";
 import { Terminal } from "../core/Terminal";
 import { IntRange } from "../util/IntRange";
 import { EBNFCore } from "./EBNFCore";
@@ -20,6 +20,7 @@ export class EBNF extends EBNFCore {
 	static readonly PATH_NAME           : string = "path";
 	static readonly TIME_NAME           : string = "time";
     static readonly DATE_NAME           : string = "date";
+    static readonly DATETIME_NAME       : string = "date-time";
 	static readonly COLOR_NAME          : string = "color";
 
     readonly DIGIT: Rule;
@@ -35,6 +36,7 @@ export class EBNF extends EBNFCore {
 	// readonly PATH: Rule; // TODO implement
 	readonly TIME: Rule;
     readonly DATE: Rule;
+    readonly DATETIME: Rule;
 	readonly COLOR: Rule;
 
     constructor() {
@@ -52,6 +54,7 @@ export class EBNF extends EBNFCore {
 		// this.PATH            = this.makePath();
 		this.TIME            = this.makeTime();
         this.DATE            = this.makeDate();
+        this.DATETIME        = this.makeDatetime();
 		this.COLOR           = this.makeColor();
     }
 
@@ -261,6 +264,25 @@ export class EBNF extends EBNFCore {
             return date;
         });
         ret.setAutocompleter(new EntireSequenceCompleter(this, new Map<String, String>()));
+        return ret;
+    }
+
+    private makeDatetime(): Rule {
+        const ret: Rule = this.sequence(EBNF.DATETIME_NAME,
+            this.DATE.withName("date"),
+            Terminal.literal(" ").withName(),
+            this.TIME.withName("time"));
+
+        ret.setEvaluator(pn => {
+            let date: Date = pn.evaluate("date");
+            let time: Date = pn.evaluate("time");
+            date.setHours(time.getHours());
+            date.setMinutes(time.getMinutes());
+            date.setSeconds(time.getSeconds());
+            date.setMilliseconds(time.getMilliseconds());
+            return date;
+        });
+        ret.setAutocompleter(new IfNothingYetEnteredAutocompleter("${Day} ${Month} ${Year} ${HH}:${MM}"));
         return ret;
     }
 
