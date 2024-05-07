@@ -1,3 +1,4 @@
+import { ParsedNode } from "src/ParsedNode";
 import { Autocompleter, IfNothingYetEnteredAutocompleter } from "../Autocompleter";
 import { Terminal } from "../core/Terminal";
 import { IntRange } from "../util/IntRange";
@@ -11,6 +12,7 @@ export class EBNF extends EBNFCore {
     static readonly SIGN_NAME           : string = "sign";
     static readonly INTEGER_NAME        : string = "int";
 	static readonly FLOAT_NAME          : string = "float";
+    static readonly MONTH_NAME          : string = "month";
 	static readonly WHITESPACE_STAR_NAME: string = "whitespace-star";
 	static readonly WHITESPACE_PLUS_NAME: string = "whitespace-plus";
 	static readonly INTEGER_RANGE_NAME  : string = "integer-range";
@@ -23,6 +25,7 @@ export class EBNF extends EBNFCore {
     readonly SIGN: Rule;
 	readonly INTEGER: Rule;
 	readonly FLOAT: Rule;
+    readonly MONTH: Rule;
 	readonly WHITESPACE_STAR: Rule;
 	readonly WHITESPACE_PLUS: Rule;
 	readonly INTEGER_RANGE: Rule;
@@ -37,6 +40,7 @@ export class EBNF extends EBNFCore {
         this.SIGN            = this.makeSign();
         this.INTEGER         = this.makeInteger();
 		this.FLOAT           = this.makeFloat();
+        this.MONTH           = this.makeMonth();
 		this.WHITESPACE_STAR = this.makeWhitespaceStar();
 		this.WHITESPACE_PLUS = this.makeWhitespacePlus();
 		this.INTEGER_RANGE   = this.makeIntegerRange();
@@ -181,6 +185,23 @@ export class EBNF extends EBNFCore {
 		ret.setAutocompleter(new IfNothingYetEnteredAutocompleter("${HH}:${MM}"));
 		return ret;
 	}
+
+    private makeMonth(): Rule {
+        return this.or(EBNF.MONTH_NAME,
+            this.sequence(undefined, Terminal.literal("January")  .withName()).setEvaluator(_pn =>  0).withName("january"),
+            this.sequence(undefined, Terminal.literal("February") .withName()).setEvaluator(_pn =>  1).withName("february"),
+            this.sequence(undefined, Terminal.literal("March")    .withName()).setEvaluator(_pn =>  2).withName("march"),
+            this.sequence(undefined, Terminal.literal("April")    .withName()).setEvaluator(_pn =>  3).withName("april"),
+            this.sequence(undefined, Terminal.literal("May")      .withName()).setEvaluator(_pn =>  4).withName("may"),
+            this.sequence(undefined, Terminal.literal("June")     .withName()).setEvaluator(_pn =>  5).withName("june"),
+            this.sequence(undefined, Terminal.literal("July")     .withName()).setEvaluator(_pn =>  6).withName("july"),
+            this.sequence(undefined, Terminal.literal("August")   .withName()).setEvaluator(_pn =>  7).withName("august"),
+            this.sequence(undefined, Terminal.literal("September").withName()).setEvaluator(_pn =>  8).withName("september"),
+            this.sequence(undefined, Terminal.literal("October")  .withName()).setEvaluator(_pn =>  9).withName("october"),
+            this.sequence(undefined, Terminal.literal("November") .withName()).setEvaluator(_pn => 10).withName("november"),
+            this.sequence(undefined, Terminal.literal("December") .withName()).setEvaluator(_pn => 11).withName("december"),
+            );
+    }
 
     private static parseTime(time: string): Date {
         const toks: string[] = time.split(":");
