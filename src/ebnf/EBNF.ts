@@ -19,6 +19,7 @@ export class EBNF extends EBNFCore {
 	static readonly INTEGER_RANGE_NAME  : string = "integer-range";
 	static readonly PATH_NAME           : string = "path";
 	static readonly TIME_NAME           : string = "time";
+    static readonly DATE_NAME           : string = "date";
 	static readonly COLOR_NAME          : string = "color";
 
     readonly DIGIT: Rule;
@@ -33,6 +34,7 @@ export class EBNF extends EBNFCore {
 	readonly INTEGER_RANGE: Rule;
 	// readonly PATH: Rule; // TODO implement
 	readonly TIME: Rule;
+    readonly DATE: Rule;
 	readonly COLOR: Rule;
 
     constructor() {
@@ -49,6 +51,7 @@ export class EBNF extends EBNFCore {
 		this.INTEGER_RANGE   = this.makeIntegerRange();
 		// this.PATH            = this.makePath();
 		this.TIME            = this.makeTime();
+        this.DATE            = this.makeDate();
 		this.COLOR           = this.makeColor();
     }
 
@@ -216,6 +219,49 @@ export class EBNF extends EBNFCore {
             this.sequence(undefined, Terminal.literal("Saturday") .withName()).setEvaluator(_pn =>  5).withName("saturday"),
             this.sequence(undefined, Terminal.literal("Sunday")   .withName()).setEvaluator(_pn =>  6).withName("sunday"),
             );
+    }
+
+    private makeDate(): Rule {
+        const day: Rule = this.sequence(undefined,
+            Terminal.DIGIT.withName(),
+            Terminal.DIGIT.withName());
+        day.setAutocompleter({
+            getAutocompletion: (pn, _justCheck) => {
+                const s: string = pn.getParsedString();
+                return s.length > 0 ? Autocompleter.VETO : "${day}";
+            }
+        });
+        day.setEvaluator(pn => parseInt(pn.getParsedString()));
+
+        const year: Rule = this.sequence(undefined,
+            Terminal.DIGIT.withName(),
+            Terminal.DIGIT.withName(),
+            Terminal.DIGIT.withName(),
+            Terminal.DIGIT.withName(),
+        );
+        year.setEvaluator(pn => parseInt(pn.getParsedString()));
+
+
+        const ret: Rule = this.sequence(EBNF.DATE_NAME,
+            day.withName("day"),
+            Terminal.literal(" ").withName(),
+            this.MONTH.withName("month"),
+            Terminal.literal(" ").withName(),
+            year.withName("year")
+        );
+        ret.setEvaluator(pn => {
+            const day: number = pn.evaluate("day");
+            const month: number = pn.evaluate("month");
+            const year: number = pn.evaluate("year");
+            let date: Date = new Date();
+            date.setDate(day);
+            date.setMonth(month);
+            date.setFullYear(year);
+            date.setHours(0, 0, 0, 0);
+            return date;
+        });
+        ret.setAutocompleter(new EntireSequenceCompleter(this, new Map<String, String>()));
+        return ret;
     }
 
     private static parseTime(time: string): Date {
