@@ -157,6 +157,12 @@ export class EBNFCore {
         return ret;
     }
 
+    makeCharacterClass(name: string | undefined, pattern: string): Rule {
+        const ret: Rule = this.sequence(name, Terminal.characterClass(pattern).withName("character-class"));
+        ret.setEvaluator(pn => pn.getParsedString().charAt(0));
+        return ret;
+    }
+
     sequence(type: string | undefined, ...children: Named<any>[]): Rule {
         const tgt: NonTerminal | undefined = this.newOrExistingNonTerminal(type);
         const sequence: Sequence = new Sequence(tgt, ...EBNFCore.getSymbols(...children));

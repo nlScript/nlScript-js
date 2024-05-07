@@ -262,7 +262,7 @@ export class Parser {
 				Terminal.literal("]").withName()
 		).setEvaluator(pn => {
 			const pattern: string = pn.getParsedString();
-			return Terminal.characterClass(pattern);
+			return this.targetGrammar.makeCharacterClass(undefined, pattern).getTarget();
 		});
 	}
 
