@@ -3,6 +3,7 @@ import { IfNothingYetEnteredAutocompleter } from "../Autocompleter";
 import { ALL_CHANNELS, ALL_POSITIONS, Binning, Channel, LED, LEDSetting, LEDs, Lens, MagnificationChanger, Microscope, Position } from "./Microscope";
 import { Timeline } from "./Timeline";
 import { Interpolator } from "./Interpolator";
+import { Autocompletion } from "../core/Autocompletion";
 
 
 export class LanguageControl {
@@ -69,7 +70,7 @@ export class LanguageControl {
 
         parser.defineType("channel-name", "'{<name>:[A-Za-z0-9]:+}'",
                           e => e.getParsedString("<name>"),
-                          new IfNothingYetEnteredAutocompleter("'${name}'"));
+                          true);
 
         parser.defineSentence(
             "Define channel {channel-name:channel-name}:" +
@@ -90,7 +91,7 @@ export class LanguageControl {
 
         parser.defineType("region-name", "'{<region-name>:[a-zA-Z0-9]:+}'",
                           e => e.getParsedString("<region-name>"),
-                          new IfNothingYetEnteredAutocompleter("'${region-name}'"));
+                          true);
 
         parser.defineType("region-dimensions", "{<width>:float} x {<height>:float} x {<depth>:float} microns",
                           e => {
@@ -122,11 +123,11 @@ export class LanguageControl {
 
         parser.defineType("defined-channels", "'{channel:[A-Za-z0-9]:+}'",
                           e => e.getParsedString("channel"),
-                          { getAutocompletion: _e => definedChannels.join(";;;")});
+                          { getAutocompletion: e => Autocompletion.literal(e, definedChannels)});
 
         parser.defineType("defined-positions", "'{position:[A-Za-z0-9]:+}'",
                           e => e.getParsedString("position"),
-                          { getAutocompletion: _e => definedRegions.join(";;;")});
+                          { getAutocompletion: e => Autocompletion.literal(e, definedRegions)});
 
         parser.defineType("time-unit", "second(s)", _e => 1);
         parser.defineType("time-unit", "minute(s)", _e => 60);
@@ -417,7 +418,7 @@ export function makeMicroscopeParser(): Parser {
 
     parser.defineType("another-led-setting", ", {led-setting:led-setting}", e => e.evaluate("led-setting"), true);
 
-    parser.defineType("channel-name", "'{<name>:[A-Za-z0-9]:+}'", e => e.getParsedString("<name>"), new IfNothingYetEnteredAutocompleter("'${name}'"));
+    parser.defineType("channel-name", "'{<name>:[A-Za-z0-9]:+}'", e => e.getParsedString("<name>"), true);
 
     parser.defineSentence(
         "Define channel {channel-name:channel-name}:" +
@@ -430,7 +431,7 @@ export function makeMicroscopeParser(): Parser {
 
 
 
-    parser.defineType("region-name", "'{<region-name>:[a-zA-Z0-9]:+}'", undefined, new IfNothingYetEnteredAutocompleter("'${region-name}'"));
+    parser.defineType("region-name", "'{<region-name>:[a-zA-Z0-9]:+}'", undefined, true);
 
     parser.defineType("region-dimensions", "{<width>:float} x {<height>:float} x {<depth>:float} microns", undefined, true);
     parser.defineType("region-center", "{<center>:tuple<float,x,y,z>} microns", undefined, true);
@@ -445,11 +446,11 @@ export function makeMicroscopeParser(): Parser {
 
     parser.defineType("defined-channels", "'{channel:[A-Za-z0-9]:+}'",
             _e => undefined,
-            { getAutocompletion: _e => definedChannels.join(";;;")});
+            { getAutocompletion: e => Autocompletion.literal(e, definedChannels) });
 
     parser.defineType("defined-positions", "'{position:[A-Za-z0-9]:+}'",
             e => e.getParsedString("position"),
-            { getAutocompletion: _e => definedRegions.join(";;;")});
+            { getAutocompletion: e => Autocompletion.literal(e, definedRegions) });
 
     parser.defineType("time-unit", "second(s)", _e => 1);
     parser.defineType("time-unit", "minute(s)", _e => 60);

@@ -41,7 +41,7 @@ export class Parser {
 
 	private readonly targetGrammar: EBNF = new EBNF();
 
-    private readonly symbol2Autocompletion: Map<String, String> = new Map<String, String>();
+    private readonly symbol2Autocompletion: Map<string, Autocompletion[]> = new Map<string, Autocompletion[]>();
 
     private compiled: boolean = false;
 

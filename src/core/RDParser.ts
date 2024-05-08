@@ -61,7 +61,7 @@ class RDParser {
         let production = pn.getProduction();
         if(production !== undefined)
             production.builtAST(pn, ...children);
-        
+
         return pn;
     }
 
@@ -121,19 +121,23 @@ class RDParser {
     private addAutocompletions(autocompletingParent: DefaultParsedNode, autocompletions: Array<Autocompletion | undefined>): void {
         if(autocompletions.length > 0 && autocompletions.at(-1) === undefined)
             return;
-        
+
         let autocompletingParentStart: number = autocompletingParent.getMatcher().pos;
         let alreadyEntered: string = this.lexer.substring(autocompletingParentStart);
-        let completion: string | undefined = autocompletingParent.getAutocompletion(false);
+        let completion: Autocompletion[] | undefined = autocompletingParent.getAutocompletion(false);
         if(completion !== undefined && completion.length > 0) {
-            for(let c of completion.split(";;;")) {
-                if(c === Autocompleter.VETO) {
+            for(let c of completion) {
+                if(c === undefined || c.getCompletion().length === 0)
+                    continue;
+                if(c instanceof Autocompletion.Veto) {
+                    // TODO clear autocompletions here and only add the veto
                     autocompletions.push(undefined); // to prevent further autocompletion
                     return;
                 }
-                let ac = new Autocompletion(c, alreadyEntered);
-                if(!autocompletions.find(existing => existing?.equals(ac)))
-                    autocompletions.push(ac);
+                c.setAlreadyEntered(alreadyEntered);
+                const cCompletion: string = c.getCompletion();
+                if(!autocompletions.some(ac => ac?.getCompletion() === cCompletion))
+                    autocompletions.push(c);
             }
         }
     }
@@ -152,7 +156,7 @@ class RDParser {
             symbolSequence.addMatcher(matcher);
             if(matcher.state.equals(ParsingState.END_OF_INPUT) && endOfInput !== undefined)
                 endOfInput.push(symbolSequence);
-            
+
             if(!matcher.state.equals(ParsingState.SUCCESSFUL))
                 return symbolSequence;
 
@@ -182,10 +186,10 @@ class RDParser {
             }
             this.lexer.setPosition(lexerPos);
         }
-        
+
         if(best !== undefined)
             this.lexer.setPosition(lexerPosOfBest);
-        
+
         return best as SymbolSequence;
     }
 
@@ -251,7 +255,7 @@ class RDParser {
             // already encountered EOI or FAILED before, do nothing
             if(state.equals(ParsingState.END_OF_INPUT) || state.equals(ParsingState.FAILED))
                 break;
-            
+
             const matcher = child.getMatcher();
             const childState = matcher.state;
             if(!childState.equals(ParsingState.NOT_PARSED)) {
@@ -270,7 +274,7 @@ class RDParser {
 
 class SymbolSequence {
     readonly sequence: Sym[] = [];
-    
+
     pos: number = 0;
 
     readonly parent: SymbolSequence | undefined;

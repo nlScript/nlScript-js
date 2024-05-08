@@ -15,9 +15,10 @@ import { Rule } from "./Rule";
 import { Sequence } from "./Sequence";
 import { Star } from "./Star";
 import { Evaluator } from "../Evaluator"
+import { Autocompletion } from "../core/Autocompletion";
 
 export class EBNFCore {
-    
+
     private readonly symbols: Map<string, Sym> = new Map();
 
     private readonly rules: Rule[] = [];
@@ -129,30 +130,31 @@ export class EBNFCore {
     list(type: string | undefined, child: Named<any>): Rule {
         const wsStar: NamedRule = this.star(undefined, Terminal.WHITESPACE.withName()).withName("ws*");
         const delimiter: Rule = this.sequence(undefined, wsStar, Terminal.literal(",").withName(), wsStar);
-        delimiter.setAutocompleter(new IfNothingYetEnteredAutocompleter(", "));
+        delimiter.setAutocompleter(new IfNothingYetEnteredAutocompleter(", ", ""));
         return this.join(type, child, undefined, undefined, delimiter.getTarget(), true, IntRange.STAR);
     }
 
     tuple(type: string | undefined, child: Named<any>, ...names: string[]): Rule {
         const wsStar: NamedRule = this.star(undefined, Terminal.WHITESPACE.withName()).withName("ws*");
-        wsStar.get().setAutocompleter({getAutocompletion: (_n, _justCheck) => ""});
-        const open: Sym      = this.sequence(undefined, Terminal.literal("(").withName("open"), wsStar).getTarget();
-        const close: Sym     = this.sequence(undefined, wsStar, Terminal.literal(")").withName("close")).getTarget();
-        const delimiter: Sym = this.sequence(undefined, wsStar, Terminal.literal(",").withName("delimiter"), wsStar).getTarget();
-        const ret: Rule = this.join(type, child, open, close, delimiter, true, names);
+        wsStar.get().setAutocompleter({getAutocompletion: (pn, _justCheck) => Autocompletion.literal(pn, [""]) });
+        const open: Rule      = this.sequence(undefined, Terminal.literal("(").withName("open"), wsStar);
+        const close: Rule     = this.sequence(undefined, wsStar, Terminal.literal(")").withName("close"));
+        const delimiter: Rule = this.sequence(undefined, wsStar, Terminal.literal(",").withName("delimiter"), wsStar);
+        const ret: Rule = this.join(type, child, open.getTarget(), close.getTarget(), delimiter.getTarget(), true, names);
         ret.setAutocompleter({getAutocompletion: (pn, justCheck) => {
             if(pn.getParsedString().length > 0)
                 return undefined;
             if(justCheck)
-                return Autocompleter.DOES_AUTOCOMPLETE;
-            let sb = "(";
-            const rule: Join = pn.getRule() as Join;
-            sb += "${" + rule.getNameForChild(0) + "}";
-            for(let i = 1; i < rule.getCardinality().getLower(); i++) {
-                sb += ", ${" + rule.getNameForChild(i) + "}";
+                return Autocompletion.doesAutocomplete(pn);
+            const seq: Autocompletion.EntireSequence = new Autocompletion.EntireSequence(pn);
+            seq.addLiteral(open.getTarget(), "open", "(");
+            seq.addParameterized(child.getSymbol(), names[0], names[0]);
+            for(let i = 1; i < names.length; i++) {
+                seq.addLiteral(delimiter.getTarget(), "delimiter", ", ");
+                seq.addParameterized(child.getSymbol(), names[i], names[i]);
             }
-            sb += ")";
-            return sb;
+            seq.addLiteral(close.getTarget(), "close", ")");
+            return seq.asArray();
         }});
         return ret;
     }
@@ -160,6 +162,7 @@ export class EBNFCore {
     makeCharacterClass(name: string | undefined, pattern: string): Rule {
         const ret: Rule = this.sequence(name, Terminal.characterClass(pattern).withName("character-class"));
         ret.setEvaluator(pn => pn.getParsedString().charAt(0));
+        ret.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
         return ret;
     }
 
@@ -189,7 +192,7 @@ export class EBNFCore {
         let s: Sym = rule.getTarget();
         if(this.symbols.get(s.getSymbol()) === undefined)
             this.symbols.set(s.getSymbol(), s);
-        
+
         for(let s of rule.getChildren()) {
             if(!s.isEpsilon() && this.symbols.get(s.getSymbol()) === undefined)
                 this.symbols.set(s.getSymbol(), s);

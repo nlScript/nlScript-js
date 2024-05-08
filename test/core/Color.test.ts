@@ -10,8 +10,8 @@ function rgb2int(r: number, g: number, b: number): number {
 
 function test01(): void {
     const hlp: Parser = new Parser();
-    hlp.defineSentence("My favorite color is {c:color}.", pn => {
-        const color: number = pn.evaluate("c");
+    hlp.defineSentence("My favorite color is {text-color:color}.", pn => {
+        const color: number = pn.evaluate("text-color");
         expect(color).toBe(rgb2int(128, 255, 0));
         return undefined;
     });

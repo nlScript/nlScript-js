@@ -4,6 +4,7 @@ import { Terminal } from "../core/Terminal";
 import { IntRange } from "../util/IntRange";
 import { EBNFCore } from "./EBNFCore";
 import { Rule } from "./Rule";
+import { Autocompletion } from "src/core/Autocompletion";
 
 export class EBNF extends EBNFCore {
 
@@ -113,13 +114,13 @@ export class EBNF extends EBNFCore {
 
     private makeWhitespaceStar(): Rule {
         const ret: Rule = this.star(EBNF.WHITESPACE_STAR_NAME, Terminal.WHITESPACE.withName());
-        ret.setAutocompleter(new IfNothingYetEnteredAutocompleter(" "));
+        ret.setAutocompleter(new IfNothingYetEnteredAutocompleter(" ", ""));
         return ret;
     }
 
     private makeWhitespacePlus(): Rule {
         const ret: Rule = this.plus(EBNF.WHITESPACE_PLUS_NAME, Terminal.WHITESPACE.withName());
-        ret.setAutocompleter(new IfNothingYetEnteredAutocompleter(" "));
+        ret.setAutocompleter(new IfNothingYetEnteredAutocompleter(" ", ""));
         return ret;
     }
 
@@ -184,14 +185,23 @@ export class EBNF extends EBNFCore {
     }
 
     private makeTime(): Rule {
-		const ret: Rule = this.sequence(EBNF.TIME_NAME,
+        const hour: Rule = this.sequence(undefined,
             this.optional(undefined, Terminal.DIGIT.withName()).withName(),
-                Terminal.DIGIT.withName(),
-                Terminal.literal(":").withName(),
-				Terminal.DIGIT.withName(),
-				Terminal.DIGIT.withName());
+            Terminal.DIGIT.withName());
+        hour.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
+
+        const minute: Rule = this.sequence(undefined,
+            Terminal.DIGIT.withName(),
+			Terminal.DIGIT.withName());
+        minute.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
+
+		const ret: Rule = this.sequence(EBNF.TIME_NAME,
+            hour.withName("HH"),
+            Terminal.literal(":").withName(),
+			minute.withName("MM"));
+
 		ret.setEvaluator(pn => EBNF.parseTime(pn.getParsedString()));
-		ret.setAutocompleter(new IfNothingYetEnteredAutocompleter("${HH}:${MM}"));
+		ret.setAutocompleter(new EntireSequenceCompleter(this, new Map<string, Autocompletion[]>()));
 		return ret;
 	}
 
@@ -226,14 +236,9 @@ export class EBNF extends EBNFCore {
 
     private makeDate(): Rule {
         const day: Rule = this.sequence(undefined,
-            Terminal.DIGIT.withName(),
+            this.optional(undefined, Terminal.DIGIT.withName()).withName(),
             Terminal.DIGIT.withName());
-        day.setAutocompleter({
-            getAutocompletion: (pn, _justCheck) => {
-                const s: string = pn.getParsedString();
-                return s.length > 0 ? Autocompleter.VETO : "${day}";
-            }
-        });
+        day.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
         day.setEvaluator(pn => parseInt(pn.getParsedString()));
 
         const year: Rule = this.sequence(undefined,
@@ -242,6 +247,7 @@ export class EBNF extends EBNFCore {
             Terminal.DIGIT.withName(),
             Terminal.DIGIT.withName(),
         );
+        year.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
         year.setEvaluator(pn => parseInt(pn.getParsedString()));
 
 
@@ -263,7 +269,7 @@ export class EBNF extends EBNFCore {
             date.setHours(0, 0, 0, 0);
             return date;
         });
-        ret.setAutocompleter(new EntireSequenceCompleter(this, new Map<String, String>()));
+        ret.setAutocompleter(new EntireSequenceCompleter(this, new Map<string, Autocompletion[]>()));
         return ret;
     }
 
@@ -282,7 +288,7 @@ export class EBNF extends EBNFCore {
             date.setMilliseconds(time.getMilliseconds());
             return date;
         });
-        ret.setAutocompleter(new IfNothingYetEnteredAutocompleter("${Day} ${Month} ${Year} ${HH}:${MM}"));
+        ret.setAutocompleter(new EntireSequenceCompleter(this, new Map<string, Autocompletion[]>));
         return ret;
     }
 

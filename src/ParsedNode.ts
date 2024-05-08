@@ -1,3 +1,4 @@
+import { Autocompletion } from "./core";
 import { DefaultParsedNode } from "./core/DefaultParsedNode";
 import { Matcher } from "./core/Matcher";
 import { ParsingState } from "./core/ParsingState";
@@ -46,7 +47,7 @@ class ParsedNode extends DefaultParsedNode {
         return thisRule === parentRule;
     }
 
-    getAutocompletion(justCheck: boolean): string | undefined {
+    getAutocompletion(justCheck: boolean): Autocompletion[] | undefined {
         let rule: Rule | undefined = this.getRule();
         if(rule !== undefined && rule.getAutocompleter() !== undefined && !this.parentHasSameRule()) {
             return rule.getAutocompleter().getAutocompletion(this, justCheck);

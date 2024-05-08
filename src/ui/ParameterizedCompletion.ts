@@ -1,6 +1,8 @@
 import { StateEffect, StateField, Range, RangeCursor } from "@codemirror/state"
 import { Decoration, DecorationSet, WidgetType } from "@codemirror/view"
 import { EditorView } from "codemirror";
+import { Autocompletion } from "../core/Autocompletion";
+import { Rule } from "src/ebnf/Rule";
 
 // code mirror effect that you will use to define the effect you want (the decoration)
 const addHighlight = StateEffect.define<Range<Decoration>[]>();
@@ -79,6 +81,8 @@ export type ParameterChangeListener = (parameterIndex: number, isLast: boolean) 
 
 export class ParameterizedCompletion {
     private readonly tc: EditorView;
+    private parameters: ParsedParam[] = [];
+    private forAutocompletion: Autocompletion | undefined = undefined;
     private parameterChangeListener: ParameterChangeListener | undefined = undefined;
 
     constructor(tc: EditorView) {
@@ -89,13 +93,14 @@ export class ParameterizedCompletion {
         this.parameterChangeListener = l;
     }
 
-    replaceSelection(autocompletion: string): void {
-        const parsedParams: ParsedParam[] = [];
-        const insertionString = ParameterizedCompletion.parseParameters(autocompletion, parsedParams);
+    replaceSelection(autocompletion: Autocompletion): void {
+        this.forAutocompletion = autocompletion;
+        this.parameters = [];
+        const insertionString = ParameterizedCompletion.parseParameters(autocompletion, this.parameters);
         const offset = this.tc.state.selection.main.anchor;
         this.tc.dispatch(this.tc.state.replaceSelection(insertionString));
         removeHighlights(this.tc);
-        for(let pp of parsedParams) {
+        for(let pp of this.parameters) {
             highlight(this.tc, offset + pp.i0, offset + pp.i1);
         }
         const atEnd = offset + insertionString.length;
@@ -117,6 +122,29 @@ export class ParameterizedCompletion {
             it.next();
             i++;
         }
+    }
+
+    private getParamIndexForCursor(): number | undefined {
+        const ds: DecorationSet = this.tc.state.field(highlight_extension);
+        let it: RangeCursor<Decoration> = ds.iter(0);
+        let cursor: number = this.tc.state.selection.main.head;
+        // iterate over all parameters (ranges)
+        let i = 0;
+        while(it.value !== null) {
+            if(cursor >= it.from && cursor < it.to) {
+                return i;
+            }
+            it.next();
+            i++;
+        }
+        return undefined;
+    }
+
+    getCurrentParameter(): ParsedParam | undefined {
+        const idx: number | undefined = this.getParamIndexForCursor();
+        if(idx === undefined)
+            return undefined;
+        return this.parameters[idx];
     }
 
     previous(): void {
@@ -185,40 +213,94 @@ export class ParameterizedCompletion {
         }
     }
 
-    static parseParameters(paramString: string, ret: ParsedParam[]): string {
-        let varName: string | undefined = undefined;
-        let insertString = "";
-        const l = paramString.length;
-        let hlStart = -1;
-        let i = 0;
-        while(i < l) {
-            let cha = paramString[i];
-            if(cha === '$' && i < l - 1 && paramString[i + 1] === '{') {
-                if(varName === undefined) {
-                    varName = "";
-                    hlStart = insertString.length;
-                    i = i + 1;
-                }
-                else {
-                    throw new Error("Expected '}' before next '${'");
-                }
-            }
-            else if(varName !== undefined && cha === '}') {
-                const hlEnd = insertString.length;
-                ret.push(new ParsedParam(varName, hlStart, hlEnd)); // hlEnd is exclusive
-                varName = undefined;
-            }
+    // static parseParametersOld(paramString: string, ret: ParsedParam[]): string {
+    //     let varName: string | undefined = undefined;
+    //     let insertString = "";
+    //     const l = paramString.length;
+    //     let hlStart = -1;
+    //     let i = 0;
+    //     while(i < l) {
+    //         let cha = paramString[i];
+    //         if(cha === '$' && i < l - 1 && paramString[i + 1] === '{') {
+    //             if(varName === undefined) {
+    //                 varName = "";
+    //                 hlStart = insertString.length;
+    //                 i = i + 1;
+    //             }
+    //             else {
+    //                 throw new Error("Expected '}' before next '${'");
+    //             }
+    //         }
+    //         else if(varName !== undefined && cha === '}') {
+    //             const hlEnd = insertString.length;
+    //             ret.push(new ParsedParam(varName, hlStart, hlEnd)); // hlEnd is exclusive
+    //             varName = undefined;
+    //         }
 
-            else if(varName !== undefined) {
-                varName = varName + cha;
-                insertString = insertString + cha;
-            }
-            else {
-                insertString = insertString + cha;
-            }
-            i = i + 1;
+    //         else if(varName !== undefined) {
+    //             varName = varName + cha;
+    //             insertString = insertString + cha;
+    //         }
+    //         else {
+    //             insertString = insertString + cha;
+    //         }
+    //         i = i + 1;
+    //     }
+    //     return insertString;
+    // }
+
+    static parseParameters(autocompletion: Autocompletion, ret: ParsedParam[], offset: number = 0): string {
+        if(autocompletion instanceof Autocompletion.Literal)
+            return autocompletion.getCompletion()
+
+        if(autocompletion instanceof Autocompletion.Parameterized) {
+            const s: string = autocompletion.getParamName();
+            ret.push(new ParsedParam(s, 0, s.length, autocompletion));
+            return s;
         }
-        return insertString;
+
+        if(autocompletion instanceof Autocompletion.EntireSequence) {
+            const entireSequence: Autocompletion.EntireSequence = autocompletion as Autocompletion.EntireSequence;
+            const sequenceOfCompletions: Autocompletion[][] = entireSequence.getSequenceOfCompletions();
+            const sequence: Rule = autocompletion.getSequence();
+            let insertionString: string = "";
+            for (const [idx, autocompletions] of sequenceOfCompletions.entries()) {
+                const n: number = autocompletions.length;
+                if(n > 1) {
+                    const name: string = sequence.getNameForChild(idx) as string;
+                    const p: Autocompletion.Parameterized = new Autocompletion.Parameterized(sequence.getChildren()[idx], name, name);
+                    const i0: number = offset + insertionString.length;
+                    const i1 = i0 + name.length;
+                    ret.push(new ParsedParam(name, i0, i1, p));
+                    insertionString += name;
+                }
+                else if(n === 1) {
+                    const single: Autocompletion = autocompletions[0];
+                    if(single instanceof Autocompletion.Literal) {
+                        insertionString += single.getCompletion();
+                    }
+                    else if(single instanceof Autocompletion.Parameterized) {
+                        const parameterized: Autocompletion.Parameterized = single as Autocompletion.Parameterized;
+                        const s: string = parameterized.getParamName();
+                        const i0: number = offset + insertionString.length;
+                        const i1: number = i0 + s.length;
+                        ret.push(new ParsedParam(s, i0, i1, parameterized));
+                        insertionString += s;
+                    }
+                    else if(single instanceof Autocompletion.EntireSequence) {
+                        const entire: Autocompletion.EntireSequence = single as Autocompletion.EntireSequence;
+                        const offs: number = insertionString.length;
+                        const s: string = ParameterizedCompletion.parseParameters(entire, ret, offs);
+                        insertionString += s;
+                    }
+                    else {
+                        console.log("Unknown completion type: " + typeof(autocompletion))
+                    }
+                }
+            }
+            return insertionString;
+        }
+        throw new Error("Unexpected completion type: " + typeof(autocompletion));
     }
 }
 
@@ -228,9 +310,12 @@ export class ParsedParam {
     readonly i0: number;
     readonly i1: number;
 
-    constructor(name: string, i0: number, i1: number) {
+    readonly autocompletion: Autocompletion;
+
+    constructor(name: string, i0: number, i1: number, autocompletion: Autocompletion) {
         this.name = name;
         this.i0 = i0;
         this.i1 = i1;
+        this.autocompletion = autocompletion;
     }
 }

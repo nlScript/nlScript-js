@@ -11,50 +11,53 @@ import { Rule } from "./ebnf/Rule";
 import { Sequence } from "./ebnf/Sequence";
 
 interface Autocompleter {
-    getAutocompletion(n: ParsedNode, justCheck: boolean): string | undefined;
+    getAutocompletion(n: ParsedNode, justCheck: boolean): Autocompletion[] | undefined;
 }
 
 class IfNothingYetEnteredAutocompleter implements Autocompleter {
-    private readonly completion: string;
+    private readonly ifNothingYetEntered: string;
+    private readonly otherwise: string | undefined;
 
-    constructor(completion: string) {
-        this.completion = completion;
+    constructor(ifNothingYetEntered: string, otherwise: string | undefined) {
+        this.ifNothingYetEntered = ifNothingYetEntered;
+        this.otherwise = otherwise;
     }
 
-    getAutocompletion(pn: ParsedNode, _justCheck: boolean) : string {
-        return pn.getParsedString().length == 0 ? this.completion : "";
+    getAutocompletion(pn: ParsedNode, _justCheck: boolean): Autocompletion[] | undefined {
+        if(pn.getParsedString().length === 0)
+            return Autocompletion.literal(pn, [this.ifNothingYetEntered]);
+
+        if(this.otherwise !== undefined)
+            return Autocompletion.literal(pn, [this.otherwise]);
+
+        return undefined;
     }
 }
 
 class EntireSequenceCompleter implements Autocompleter {
-    
+
     private readonly ebnf: EBNFCore;
 
-    private readonly symbol2Autocompletion: Map<String, String>;
+    private readonly symbol2Autocompletion: Map<string, Autocompletion[]>;
 
-    constructor(ebnf: EBNFCore, symbol2Autocompletion: Map<String, String>) {
+    constructor(ebnf: EBNFCore, symbol2Autocompletion: Map<string, Autocompletion[]>) {
         this.ebnf = ebnf;
         this.symbol2Autocompletion = symbol2Autocompletion;
     }
 
-    getAutocompletion(pn: ParsedNode, _justCheck: boolean): string | undefined {
+    getAutocompletion(pn: ParsedNode, _justCheck: boolean): Autocompletion[] | undefined {
         const alreadyEntered: string = pn.getParsedString();
-        // if(alreadyEntered.length > 0)
-        //     return Autocompleter.VETO;
-        
-        // if(justCheck)
-        //     return Autocompleter.DOES_AUTOCOMPLETE;
-
-        let autocompletionString: string = "";
 
         const sequence: Rule = pn.getRule() as Rule;
         const children: Sym[] = sequence.getChildren();
 
+        const entireSequenceCompletion = new Autocompletion.EntireSequence(pn);
+
         for(let i = 0; i < children.length; i++) {
             let key = children[i].getSymbol() + ":" + sequence.getNameForChild(i);
-            let autocompletionStringForChild = this.symbol2Autocompletion.get(key);
-            if(autocompletionStringForChild !== undefined) {
-                autocompletionString += autocompletionStringForChild;
+            let autocompletionsForChild: Autocompletion[] | undefined = this.symbol2Autocompletion.get(key);
+            if(autocompletionsForChild !== undefined) {
+                entireSequenceCompletion.add(autocompletionsForChild);
                 continue;
             }
             const bnf: BNF = new BNF(this.ebnf.getBNF());
@@ -67,44 +70,33 @@ class EntireSequenceCompleter implements Autocompleter {
             bnf.addProduction(new Production(BNF.ARTIFICIAL_START_SYMBOL, newSequence.getTarget()));
             const parser: RDParser = new RDParser(bnf, new Lexer(""), EBNFParsedNodeFactory.INSTANCE);
 
-            const autocompletions: Autocompletion[] = [];
-            parser.parse(autocompletions);
+            autocompletionsForChild = [];
+            parser.parse(autocompletionsForChild);
 
-            const n: number = autocompletions.length;
-            if(n > 1)
-                autocompletionStringForChild = "${" + sequence.getNameForChild(i) + "}";
-            else if(n == 1)
-                autocompletionStringForChild = autocompletions[0].getCompletion();
-
-            this.symbol2Autocompletion.set(key, autocompletionStringForChild as string);
-            autocompletionString += autocompletionStringForChild;
+            this.symbol2Autocompletion.set(key, autocompletionsForChild);
+            entireSequenceCompletion.add(autocompletionsForChild);
         }
-        const idx: number = autocompletionString.indexOf("${");
-        if(idx !== undefined && alreadyEntered.length > idx)
+        const idx: number | undefined = entireSequenceCompletion.getCompletion().indexOf("${");
+        if(idx !== undefined && idx >= 0 && alreadyEntered.length > idx)
             return undefined;
-        return autocompletionString;
+        return entireSequenceCompletion.asArray();
     }
 }
 
 module Autocompleter {
-    export const VETO: string = 'VETO';
-
-    export const DOES_AUTOCOMPLETE = "DOES_AUTOCOMPLETE";
-
     export const DEFAULT_INLINE_AUTOCOMPLETER: Autocompleter = {
-        getAutocompletion(pn: ParsedNode, _justCheck: boolean): string | undefined {
+        getAutocompletion(pn: ParsedNode, _justCheck: boolean): Autocompletion[] | undefined {
             let alreadyEntered = pn.getParsedString();
             if(alreadyEntered.length > 0)
-                return VETO;
+                return Autocompletion.veto(pn);
             let name = pn.getName();
-            if(name !== undefined)
-                return "${" + name + "}";
-            name = pn.getSymbol().getSymbol();
-            if(name !== undefined)
-                return "${" + name + "}";
-            return undefined;
+            if(name === undefined)
+                name = pn.getSymbol().getSymbol();
+            if(name === undefined)
+                return undefined;
+            return Autocompletion.parameterized(pn, name);
         }
     }
 };
 
-export { Autocompleter, IfNothingYetEnteredAutocompleter, EntireSequenceCompleter };
+export { Autocompleter, EntireSequenceCompleter, IfNothingYetEnteredAutocompleter };

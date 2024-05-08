@@ -4,6 +4,7 @@ import { Production } from "./Production";
 import { Sym } from "./Symbol";
 import { Autocompleter } from "../Autocompleter";
 import { Named } from "./Named";
+import { Autocompletion } from "./Autocompletion";
 
 class DefaultParsedNode {
 
@@ -13,7 +14,7 @@ class DefaultParsedNode {
     private readonly symbol: Sym;
     private readonly production: Production | undefined;
     private readonly matcher: Matcher;
-    
+
     private name: string | undefined;
 
     constructor(matcher: Matcher, symbol: Sym, production: Production | undefined) {
@@ -43,23 +44,23 @@ class DefaultParsedNode {
     }
 
     doesAutocomplete(): boolean {
-        let autocompletion: string | undefined = this.getAutocompletion(true);
+        let autocompletion: Autocompletion[] | undefined = this.getAutocompletion(true);
         return autocompletion !== null && autocompletion !== undefined;
     }
 
-    getAutocompletion(_justCheck: boolean): string | undefined {
+    getAutocompletion(_justCheck: boolean): Autocompletion[] | undefined {
         if(this.symbol === null || this.symbol === undefined)
             return undefined;
-        
+
         if(this.symbol instanceof Literal)
-            return this.symbol.getSymbol();
-        
+            return Autocompletion.literal(this, [this.symbol.getSymbol()]);
+
         let name: string = this.getName();
         if(name === Named.UNNAMED)
             name = this.symbol.getSymbol();
 
         if(this.symbol.isTerminal()) {
-            return this.getParsedString().length > 0 ? Autocompleter.VETO : "${" + name + "}";
+            return this.getParsedString().length > 0 ? Autocompletion.veto(this) : Autocompletion.parameterized(this, name);
         }
         return undefined;
     }
@@ -110,7 +111,7 @@ class DefaultParsedNode {
 
         if(typeof(n[0]) === 'number')
             return this.children[n].evaluate();
-        
+
         if(typeof(n[0]) === 'string') {
             let pn: DefaultParsedNode = this;
             for(let name of n) {
@@ -120,7 +121,7 @@ class DefaultParsedNode {
             }
             return pn.evaluate();
         }
-        
+
         return undefined;
     }
 

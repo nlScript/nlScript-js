@@ -174,7 +174,8 @@ export class ACEditor {
         }
     }
 
-    insertCompletion(completion: string | undefined): void {
+    // corresponds to AutocompletionContext.insertCompletion()
+    insertCompletion(completion: Autocompletion | undefined): void {
         if(!completion)
             return;
         const selection = this.editor.state.selection;
@@ -186,14 +187,15 @@ export class ACEditor {
         if(selection.main.empty)
             this.editor.dispatch({selection: { anchor: caret, head: caret - this.completer.completionPrefix().length }})
 
-        if(completion.indexOf("${") >= 0) {
+        const repl = completion.getCompletion();
+        if(repl.indexOf("${") >= 0) {
             this.cancelParameterizedCompletion();
             this.parameterizedCompletion = new ParameterizedCompletion(this.editor);
             this.parameterizedCompletion.setParameterChangeListener((pIdx: number, wasLast: boolean) => this.parameterChanged(pIdx, wasLast));
             this.parameterizedCompletion.replaceSelection(completion);
         }
         else {
-            this.editor.dispatch(this.editor.state.replaceSelection(completion));
+            this.editor.dispatch(this.editor.state.replaceSelection(repl));
             this.completer.hidePopup();
             if(cursorIsAtEnd)
                 this.autocomplete();
@@ -263,6 +265,7 @@ export class ACEditor {
         return false;
     }
 
+    // corresponds to AutocompletionContext.doAutocompletion()
     autocomplete(autoinsertSingleOption: boolean = true) {
         const entireText: string = this.editor.state.doc.toString();
         const anchor: number = this.editor.state.selection.main.anchor;
@@ -287,13 +290,13 @@ export class ACEditor {
         if(autocompletions.length === 1) {
             if(autoinsertSingleOption || autocompletions[0].getCompletion().indexOf("${") === undefined) {
                 this.completer.setCompletions(autocompletions);
-                this.insertCompletion(autocompletions[0].getCompletion());
+                this.insertCompletion(autocompletions[0]);
                 this.completer.hidePopup();
             }
         }
         else if(autocompletions.length > 1) {
             this.completer.setCompletions(autocompletions);
-            const alreadyEntered: string = autocompletions[0].getAlreadyEnteredText();
+            const alreadyEntered: string = autocompletions[0].getAlreadyEntered();
 
             const remainingText = entireText.substring(anchor);
             let matchingLength = 0;

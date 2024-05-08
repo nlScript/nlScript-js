@@ -6,23 +6,6 @@ import { ParameterizedCompletion, ParsedParam } from "./ParameterizedCompletion"
 
 function render(completion: Completion, _state: EditorState): Node | null {
     let text: string = completion.apply ? completion.apply as string : completion.label;
-    const parsedParams: ParsedParam[] = [];
-    const insertionString: string = ParameterizedCompletion.parseParameters(text, parsedParams);
-    if(parsedParams.length > 0) {
-        let sb = insertionString;
-        for(let i = parsedParams.length - 1; i >= 0; i--) {
-            let param: ParsedParam = parsedParams[i];
-            sb = sb.substring(0, param.i1) + "</b>" + sb.substring(param.i1);
-            sb = sb.substring(0, param.i0) + "<b>" + sb.substring(param.i0);
-        }
-        text = sb;
-    }
-    
-    console.log("**" + text + "** " + text.charCodeAt(0));
-    if(text.startsWith("\n") || text.startsWith("\r"))
-        text = "&lt;new line&gt;";
-    if(text === "")
-        text = "&lt;empty&gt;";
 
     const el = document.createElement("span");
     el.innerHTML = text;
@@ -41,7 +24,7 @@ export class ACCompleter {
     readonly autocompletionExtension: Extension;
 
     private readonly view: EditorView;
-    
+
     constructor(view: EditorView) {
         this.view = view;
         const getCompletionsFn = (c: CompletionContext) => this.getCompletions(c);
@@ -70,7 +53,7 @@ export class ACCompleter {
         this.completions = completions;
     }
 
-    getSelected(): string | undefined {
+    getSelected(): Autocompletion | undefined {
         const ret = selectedCompletion(this.view.state);
         if(ret === null)
             return undefined;
@@ -79,11 +62,11 @@ export class ACCompleter {
         if(idx < 0)
             return undefined
 
-        return ret === null ? undefined : this.completions[idx].getCompletion();
+        return ret === null ? undefined : this.completions[idx];
     }
 
     completionPrefix(): string {
-        return this.completions[0].getAlreadyEnteredText();
+        return this.completions[0].getAlreadyEntered();
     }
 
     hidePopup(): void {
@@ -100,17 +83,30 @@ export class ACCompleter {
 
     private getCompletions(context: CompletionContext): CompletionResult {
         let alreadyEnteredLength: number | undefined = undefined;
-        const options = this.completions.map(a => {
+        const options = this.completions.map((a: Autocompletion) => {
             if(alreadyEnteredLength === undefined)
-                alreadyEnteredLength = a.getAlreadyEnteredText().length;
+                alreadyEnteredLength = a.getAlreadyEntered().length;
             let apply = a.getCompletion();
-            const parsedParams: ParsedParam[] = [];
-            ParameterizedCompletion.parseParameters(apply, parsedParams);
             let completion: string = apply;
-            if(completion.startsWith("\n"))
-                completion = "<html><b><new line></b></html>";
-            if(completion == "")
-                completion = "<empty>";
+
+            const parsedParams: ParsedParam[] = [];
+
+            const insertionString: string = ParameterizedCompletion.parseParameters(a, parsedParams);
+            if(parsedParams.length > 0) {
+                let sb = insertionString;
+                for(let i = parsedParams.length - 1; i >= 0; i--) {
+                    let param: ParsedParam = parsedParams[i];
+                    sb = sb.substring(0, param.i1) + "</b>" + sb.substring(param.i1);
+                    sb = sb.substring(0, param.i0) + "<b>" + sb.substring(param.i0);
+                }
+                apply = sb;
+            }
+
+            if(apply.startsWith("\n") || apply.startsWith("\r"))
+                apply = "&lt;new line&gt;";
+            if(apply === "")
+                apply = "&lt;empty&gt;";
+
             return { label: completion, apply: apply };
         });
         if(alreadyEnteredLength === undefined)
