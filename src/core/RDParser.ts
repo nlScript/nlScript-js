@@ -42,8 +42,6 @@ class RDParser {
         let parsedSequence: SymbolSequence = this.parseRecursive(seq, endOfInput);
         if(autocompletions !== undefined)
             this.collectAutocompletions(endOfInput, autocompletions as Autocompletion[])
-        if(autocompletions !== undefined && autocompletions.length > 0 && autocompletions.at(-1) === undefined)
-            autocompletions.splice(autocompletions.length - 1, 1);
         let last: DefaultParsedNode[] = [];
         let ret: DefaultParsedNode = this.createParsedTree(parsedSequence, last);
         ret = this.buildAst(ret);
@@ -87,8 +85,10 @@ class RDParser {
                 key = autocompletingParent.getSymbol().getSymbol();
             }
             if(!done.has(key)) {
-                this.addAutocompletions(autocompletingParent, autocompletions);
+                const veto: boolean = this.addAutocompletions(autocompletingParent, autocompletions);
                 done.add(key);
+                if(veto)
+                    break;
             }
         }
     }
@@ -118,10 +118,7 @@ class RDParser {
             autocompletingParents.push(autocompletingParent);
     }
 
-    private addAutocompletions(autocompletingParent: DefaultParsedNode, autocompletions: Array<Autocompletion | undefined>): void {
-        if(autocompletions.length > 0 && autocompletions.at(-1) === undefined)
-            return;
-
+    private addAutocompletions(autocompletingParent: DefaultParsedNode, autocompletions: Array<Autocompletion | undefined>): boolean {
         let autocompletingParentStart: number = autocompletingParent.getMatcher().pos;
         let alreadyEntered: string = this.lexer.substring(autocompletingParentStart);
         let completion: Autocompletion[] | undefined = autocompletingParent.getAutocompletion(false);
@@ -130,9 +127,8 @@ class RDParser {
                 if(c === undefined || c.getCompletion().length === 0)
                     continue;
                 if(c instanceof Autocompletion.Veto) {
-                    // TODO clear autocompletions here and only add the veto
-                    autocompletions.push(undefined); // to prevent further autocompletion
-                    return;
+                    autocompletions.length = 0;
+                    return true;
                 }
                 c.setAlreadyEntered(alreadyEntered);
                 const cCompletion: string = c.getCompletion();
@@ -140,6 +136,7 @@ class RDParser {
                     autocompletions.push(c);
             }
         }
+        return false;
     }
 
     private parseRecursive(symbolSequence: SymbolSequence, endOfInput: Array<SymbolSequence>): SymbolSequence {
