@@ -1,5 +1,5 @@
 import { EditorView } from "codemirror";
-import { highlight_extension, ParameterizedCompletion } from "./ParameterizedCompletion";
+import { highlight_extension, ParameterizedCompletion, ParsedParam } from "./ParameterizedCompletion";
 import { error_highlight_extension, ErrorHighlight } from "./ErrorHighlight";
 import { StateEffect } from "@codemirror/state";
 import { Parser } from "../Parser";
@@ -8,7 +8,9 @@ import { Autocompletion } from "../core/Autocompletion";
 import { ACCompleter } from "./ACCompleter";
 import { ParseException } from "../ParseException";
 import { Matcher } from "../core/Matcher";
-
+import { BNF } from "../core/BNF";
+import { Sym } from "../core/Symbol";
+import { NonTerminal } from "../core/NonTerminal";
 
 import {keymap, highlightSpecialChars, drawSelection, highlightActiveLine, dropCursor,
     rectangularSelection, crosshairCursor,
@@ -20,6 +22,7 @@ import {defaultKeymap, history, historyKeymap} from "@codemirror/commands"
 import {searchKeymap} from "@codemirror/search"
 import {autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap} from "@codemirror/autocomplete"
 import {lintKeymap} from "@codemirror/lint"
+
 
 const basicSetup: Extension = (() => [
     lineNumbers(),
@@ -285,6 +288,58 @@ export class ACEditor {
             }
             else
                 throw e;
+        }
+
+        const bnf: BNF = this.parser.getTargetGrammar().getBNF();
+        if(this.parameterizedCompletion !== undefined) {
+            if(autocompletions.length > 0) {
+                let atLeastOneCompletionForCurrentParamter: boolean= false;
+                for(let comp of autocompletions) {
+                    let symbol: Sym = comp.forSymbol;
+
+                    // if comp is an EntireSequence completion, we should just check the first
+                    // we can do that using ParameterizedCompletionContext.parseParameters
+                    if(comp instanceof Autocompletion.EntireSequence) {
+                        let tmp: ParsedParam[] = [];
+                        ParameterizedCompletion.parseParameters(comp, tmp, 0);
+                        comp = tmp[0].autocompletion;
+                        symbol = comp.forSymbol;
+                    }
+                    if(symbol.equals(this.parameterizedCompletion.getForAutocompletion().forSymbol)) {
+                        atLeastOneCompletionForCurrentParamter = true;
+                        break;
+                    }
+
+                    // check if symbol is a descendent of the parameters autocompletion symbol
+                    const pp: ParsedParam | undefined = this.parameterizedCompletion.getCurrentParameter();
+                    console.log("current param: " + pp?.toString());
+                    const parameterSymbol: Sym | undefined = pp?.autocompletion.forSymbol;
+                    // symbol == parameterSymbol? -> fine
+                    if(symbol.equals(parameterSymbol)) {
+                        atLeastOneCompletionForCurrentParamter = true;
+                        break;
+                    }
+
+                    if(parameterSymbol instanceof NonTerminal) {
+                        // check recursively if symbol is in the list of child symbols
+                        if(parameterSymbol.uses(symbol, bnf)) {
+                            atLeastOneCompletionForCurrentParamter = true;
+                            break;
+                        }
+                    }
+                }
+                if(!atLeastOneCompletionForCurrentParamter) {
+                    // console.log("now I'd call next.");
+                    this.parameterizedCompletion.next();
+                    return;
+                }
+            }
+            else {
+                console.log("no completions");
+            }
+        }
+        else {
+            console.log("parameterized completion == null");
         }
 
         if(autocompletions.length === 1) {

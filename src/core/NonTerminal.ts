@@ -1,4 +1,6 @@
+import { BNF } from "./BNF";
 import { Named } from "./Named";
+import { Production } from "./Production";
 import { Sym } from "./Symbol";
 
 class NonTerminal extends Sym {
@@ -21,6 +23,27 @@ class NonTerminal extends Sym {
 
     withName(name: string | undefined = undefined): Named<NonTerminal> {
         return new Named<NonTerminal>(this, name);
+    }
+
+    uses(symbol: Sym, bnf: BNF, progressing?: Set<string>): boolean {
+        if(progressing === undefined)
+            progressing = new Set<string>();
+        const productions: Production[] = bnf.getProductions(this);
+        for(const p of productions) {
+            if(p.toString() in progressing)
+                continue;
+            progressing.add(p.toString());
+            const rhs: Sym[] = p.getRight();
+            for(const rSym of rhs) {
+                if(rSym.equals(symbol))
+                    return true;
+                else if(rSym instanceof NonTerminal) {
+                    if(rSym.uses(symbol, bnf, progressing))
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 
     override toString(): string {

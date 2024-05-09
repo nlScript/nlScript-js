@@ -89,6 +89,10 @@ export class ParameterizedCompletion {
         this.tc = tc;
     }
 
+    getForAutocompletion(): Autocompletion {
+        return this.forAutocompletion as Autocompletion;
+    }
+
     setParameterChangeListener(l: ParameterChangeListener): void {
         this.parameterChangeListener = l;
     }
@@ -131,7 +135,7 @@ export class ParameterizedCompletion {
         // iterate over all parameters (ranges)
         let i = 0;
         while(it.value !== null) {
-            if(cursor >= it.from && cursor < it.to) {
+            if(cursor >= it.from && cursor <= it.to) {
                 return i;
             }
             it.next();
@@ -317,5 +321,9 @@ export class ParsedParam {
         this.i0 = i0;
         this.i1 = i1;
         this.autocompletion = autocompletion;
+    }
+
+    toString(): string {
+        return this.name;
     }
 }

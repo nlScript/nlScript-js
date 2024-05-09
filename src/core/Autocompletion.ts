@@ -4,8 +4,8 @@ import { Sym } from "./Symbol";
 import { ParsedNode } from "src/ParsedNode";
 
 abstract class Autocompletion {
-    private readonly symbolName: string;
-    private readonly forSymbol: Sym;
+    public readonly symbolName: string;
+    public readonly forSymbol: Sym;
     private alreadyEntered: string;
 
     constructor(pn: DefaultParsedNode);
