@@ -126,6 +126,12 @@ export class Parser {
         this.compiled = true;
     }
 
+	undefineType(type: string) {
+		const unitsSymbol: NonTerminal = this.targetGrammar.getSymbol(type) as NonTerminal;
+		this.targetGrammar.removeRules(unitsSymbol);
+		this.compiled = false;
+	}
+
     parse(text: string, autocompletions?: Autocompletion[]): ParsedNode {
         if(!this.compiled)
             this.compile();
