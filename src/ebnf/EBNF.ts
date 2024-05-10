@@ -8,8 +8,8 @@ import { Autocompletion } from "src/core/Autocompletion";
 
 export class EBNF extends EBNFCore {
 
-    static readonly DIGIT_NAME          : string = "digit";
-    static readonly LETTER_NAME         : string = "letter";
+    static readonly DIGIT_NAME          : string = Terminal.DIGIT.getSymbol();
+    static readonly LETTER_NAME         : string = Terminal.LETTER.getSymbol();
     static readonly SIGN_NAME           : string = "sign";
     static readonly INTEGER_NAME        : string = "int";
 	static readonly FLOAT_NAME          : string = "float";
@@ -24,8 +24,6 @@ export class EBNF extends EBNFCore {
     static readonly DATETIME_NAME       : string = "date-time";
 	static readonly COLOR_NAME          : string = "color";
 
-    readonly DIGIT: Rule;
-    readonly LETTER: Rule;
     readonly SIGN: Rule;
 	readonly INTEGER: Rule;
 	readonly FLOAT: Rule;
@@ -42,8 +40,6 @@ export class EBNF extends EBNFCore {
 
     constructor() {
         super();
-        this.DIGIT           = this.makeDigit();
-        this.LETTER          = this.makeLetter();
         this.SIGN            = this.makeSign();
         this.INTEGER         = this.makeInteger();
 		this.FLOAT           = this.makeFloat();
@@ -57,6 +53,8 @@ export class EBNF extends EBNFCore {
         this.DATE            = this.makeDate();
         this.DATETIME        = this.makeDatetime();
 		this.COLOR           = this.makeColor();
+        this.symbols.set(Terminal.DIGIT.getSymbol(), Terminal.DIGIT);
+        this.symbols.set(Terminal.LETTER.getSymbol(), Terminal.LETTER);
     }
 
     // static clearFilesystemCache() {
@@ -78,20 +76,6 @@ export class EBNF extends EBNFCore {
             this.plus(undefined, Terminal.DIGIT.withName("digit")).withName("plus")
         );
         ret.setEvaluator(pn => parseInt(pn.getParsedString()));
-        ret.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
-        return ret;
-    }
-
-    private makeLetter(): Rule {
-        const ret: Rule = this.sequence(EBNF.LETTER_NAME, Terminal.LETTER.withName());
-        ret.setEvaluator(pn => pn.getParsedString().charAt(0));
-        ret.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
-        return ret;
-    }
-
-    private makeDigit(): Rule {
-        const ret: Rule = this.sequence(EBNF.DIGIT_NAME, Terminal.DIGIT.withName());
-        ret.setEvaluator(pn => pn.getParsedString().charAt(0));
         ret.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
         return ret;
     }

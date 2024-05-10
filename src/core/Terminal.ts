@@ -33,6 +33,8 @@ abstract class Terminal extends Sym {
 
   abstract matches(lexer: Lexer): Matcher;
 
+  abstract evaluate(matcher: Matcher): any;
+
   withName(name: string | undefined = undefined): Named<Terminal> {
     return new Named<Terminal>(this, name);
   }
@@ -50,6 +52,10 @@ class Epsilon extends Terminal {
   override matches(lexer: Lexer): Matcher {
     return new Matcher(ParsingState.SUCCESSFUL, lexer.getPosition(), "");
   }
+
+  override evaluate(_matcher: Matcher) {
+    return undefined;
+  }
 }
 
 class EndOfInput extends Terminal {
@@ -62,6 +68,10 @@ class EndOfInput extends Terminal {
     if (lexer.isAtEnd())
       return new Matcher(ParsingState.SUCCESSFUL, pos, " ");
     return new Matcher(ParsingState.FAILED, pos, "");
+  }
+
+  override evaluate(_matcher: Matcher) {
+    return undefined;
   }
 }
 
@@ -78,6 +88,10 @@ class Digit extends Terminal {
     if (c.match(/[0-9]/))
       return new Matcher(ParsingState.SUCCESSFUL, pos, c);
     return new Matcher(ParsingState.FAILED, pos, c);
+  }
+
+  override evaluate(matcher: Matcher) {
+    return matcher.parsed.charAt(0);
   }
 }
 
@@ -106,6 +120,10 @@ class Literal extends Terminal {
     return new Matcher(ParsingState.SUCCESSFUL, pos, symbol);
   }
 
+  override evaluate(matcher: Matcher) {
+    return matcher.parsed;
+  }
+
   override toString(): string {
     return `'${this.getSymbol()}'`;
   }
@@ -131,6 +149,10 @@ class Letter extends Terminal {
     }
     return new Matcher(ParsingState.FAILED, pos, c);
   }
+
+  override evaluate(matcher: Matcher) {
+    return matcher.parsed.charAt(0);
+  }
 }
 
 class Whitespace extends Terminal {
@@ -146,6 +168,10 @@ class Whitespace extends Terminal {
     if (c === " " || c === "\t")
       return new Matcher(ParsingState.SUCCESSFUL, pos, c);
     return new Matcher(ParsingState.FAILED, pos, c);
+  }
+
+  override evaluate(matcher: Matcher) {
+    return matcher.parsed.charAt(0);
   }
 }
 
@@ -203,6 +229,10 @@ class CharacterClass extends Terminal {
     if (this.ranges.checkCharacter(c.charCodeAt(0)))
       return new Matcher(ParsingState.SUCCESSFUL, pos, c);
     return new Matcher(ParsingState.FAILED, pos, c);
+  }
+
+  override evaluate(matcher: Matcher) {
+    return matcher.parsed.charAt(0);
   }
 
   override toString(): string {

@@ -123,10 +123,9 @@ function testCharacterClass(): void {
     const grammar: EBNF = hlp.getGrammar();
     grammar.compile(hlp.CHARACTER_CLASS.getTarget());
 
-    const nt: NonTerminal = evaluate(grammar, "[a-zA-Z]");
-    const rule: Rule = hlp.getTargetGrammar().getRules(nt)[0];
-    expect(rule.getChildren()[0]).toBeInstanceOf(CharacterClass)
-    expect(rule.getChildren()[0].getSymbol()).toBe("[a-zA-Z]");
+    const nt: CharacterClass = evaluate(grammar, "[a-zA-Z]");
+    expect(nt.getSymbol()).toEqual("[a-zA-Z]");
+    expect(nt).toBeInstanceOf(CharacterClass);
 }
 
 function testType(): void {
@@ -217,7 +216,7 @@ function testVariable(): void {
     rule = hlp.getTargetGrammar().getRules(evaluatedNonTerminal.get())[0];
     expect(rule).toBeInstanceOf(Plus);
     let plus: Plus = rule as Plus;
-    const chclass: Sym = hlp.getTargetGrammar().getRules(plus.getEntry() as NonTerminal)[0].getChildren()[0];
+    const chclass: Sym = plus.getEntry();
     expect(chclass.getSymbol()).toBe("[A-Z]");
 
     test = "{blubb , alkjad asd 4. <>l}";

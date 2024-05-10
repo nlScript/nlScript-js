@@ -19,7 +19,7 @@ import { Autocompletion } from "../core/Autocompletion";
 
 export class EBNFCore {
 
-    private readonly symbols: Map<string, Sym> = new Map();
+    protected readonly symbols: Map<string, Sym> = new Map();
 
     private readonly rules: Rule[] = [];
 
@@ -156,13 +156,6 @@ export class EBNFCore {
             seq.addLiteral(close.getTarget(), "close", ")");
             return seq.asArray();
         }});
-        return ret;
-    }
-
-    makeCharacterClass(name: string | undefined, pattern: string): Rule {
-        const ret: Rule = this.sequence(name, Terminal.characterClass(pattern).withName("character-class"));
-        ret.setEvaluator(pn => pn.getParsedString().charAt(0));
-        ret.setAutocompleter(Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER);
         return ret;
     }
 

@@ -1,4 +1,4 @@
-import { Literal } from "./Terminal";
+import { Literal, Terminal } from "./Terminal";
 import { Matcher } from "./Matcher";
 import { Production } from "./Production";
 import { Sym } from "./Symbol";
@@ -106,8 +106,11 @@ class DefaultParsedNode {
     evaluate(...n: string[]): any;
 
     evaluate(...n: any): any {
-        if(n.length === 0)
+        if(n.length === 0) {
+            if(this.symbol.isTerminal())
+                return (this.symbol as Terminal).evaluate(this.getMatcher());
             return this.getParsedString();
+        }
 
         if(typeof(n[0]) === 'number')
             return this.children[n].evaluate();
