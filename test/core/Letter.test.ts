@@ -12,8 +12,8 @@ function test01(): void {
 
 
     hlp.defineSentence("The first two characters of my name are {l:letter:2}.", pn => {
-        const l: string = pn.evaluate("l");
-        expect(l).toBe("Be");
+        const l: string[] = pn.evaluate("l");
+        expect(l).toEqual(["B", "e"]);
         return null;
     });
     

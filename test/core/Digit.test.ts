@@ -12,8 +12,8 @@ function test01(): void {
 
 
     hlp.defineSentence("The first two digits of my telephone number are {d:digit:2}.", pn => {
-        const d: string = pn.evaluate("d");
-        expect(d).toBe("09");
+        const d: string[] = pn.evaluate("d");
+        expect(d).toEqual(["0", "9"]);
         return null;
     });
     

@@ -10,20 +10,7 @@ export module Evaluator {
         if(pn.getChildren().length === 0)
             return [];
 
-        let ret: any[] = pn.getChildren().map((p: DefaultParsedNode): any => p.evaluate());
-
-        let allAreCharacters: boolean = ret.every((p: any): boolean => typeof(p) === 'string' && p.length === 1);
-
-        if(!allAreCharacters)
-            return ret;
-
-        return ret.join("");
-
-        // let ret: any[] = [];
-        // for(let i = 0; i < pn.numChildren(); i++) {
-        //     ret[i] = pn.evaluate(i);
-        // }
-        // return ret;
+        return pn.getChildren().map((p: DefaultParsedNode): any => p.evaluate());
     }
 
     export const DEFAULT_EVALUATOR = (pn: ParsedNode): any => pn.getParsedString();

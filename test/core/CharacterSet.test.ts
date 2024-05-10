@@ -12,8 +12,8 @@ function test01(): void {
 
 
     hlp.defineSentence("Two arbitrary alphanumeric characters: {c:[a-zA-Z0-9]:2}.", pn => {
-        const d: string = pn.evaluate("c");
-        expect(d).toBe("f1");
+        const d: string[] = pn.evaluate("c");
+        expect(d).toEqual(["f", "1"]);
         return null;
     });
 

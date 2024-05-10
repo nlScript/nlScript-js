@@ -1,4 +1,4 @@
-import { Autocompletion } from "src/core/Autocompletion";
+import { Autocompletion } from "../../src/core/Autocompletion";
 import { ParsedNode } from "../../src/ParsedNode";
 import { Parser } from "../../src/Parser";
 import { ParsingState } from "../../src/core/ParsingState";
