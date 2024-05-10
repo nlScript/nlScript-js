@@ -401,7 +401,7 @@ export class Parser {
 
     private program(): Rule {
 		return this.targetGrammar.join("program",
-				new NonTerminal("sentence").withName("sequence"),
+				new NonTerminal("sentence").withName("sentence"),
 				this.LINEBREAK_STAR.getTarget(),
 				this.LINEBREAK_STAR.getTarget(),
 				this.LINEBREAK_STAR.getTarget(),
