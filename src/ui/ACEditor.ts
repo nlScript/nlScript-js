@@ -351,7 +351,6 @@ export class ACEditor {
         }
         else if(autocompletions.length > 1) {
             this.completer.setCompletions(autocompletions);
-            const alreadyEntered: string = autocompletions[0].getAlreadyEntered();
             this.completer.complete();
         }
         else {
