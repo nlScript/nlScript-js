@@ -122,17 +122,17 @@ class RDParser {
         let autocompletingParentStart: number = autocompletingParent.getMatcher().pos;
         let alreadyEntered: string = this.lexer.substring(autocompletingParentStart);
         let completion: Autocompletion[] | undefined = autocompletingParent.getAutocompletion(false);
-        if(completion !== undefined && completion.length > 0) {
+        if(completion !== undefined) {
             for(let c of completion) {
-                if(c === undefined || c.getCompletion().length === 0)
+                if(c === undefined || c.isEmptyLiteral())
                     continue;
                 if(c instanceof Autocompletion.Veto) {
                     autocompletions.length = 0;
                     return true;
                 }
                 c.setAlreadyEntered(alreadyEntered);
-                const cCompletion: string = c.getCompletion();
-                if(!autocompletions.some(ac => ac?.getCompletion() === cCompletion))
+                const cCompletion: string = c.getCompletion(Autocompletion.Purpose.FOR_MENU);
+                if(!autocompletions.some(ac => ac?.getCompletion(Autocompletion.Purpose.FOR_MENU) === cCompletion))
                     autocompletions.push(c);
             }
         }

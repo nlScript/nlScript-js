@@ -1,4 +1,5 @@
 import { ParsedNode } from "./ParsedNode";
+import { DefaultParsedNode } from "./core/DefaultParsedNode";
 import { Autocompletion } from "./core/Autocompletion";
 import { BNF } from "./core/BNF";
 import { Lexer } from "./core/Lexer";
@@ -11,7 +12,7 @@ import { Rule } from "./ebnf/Rule";
 import { Sequence } from "./ebnf/Sequence";
 
 interface Autocompleter {
-    getAutocompletion(n: ParsedNode, justCheck: boolean): Autocompletion[] | undefined;
+    getAutocompletion(n: DefaultParsedNode, justCheck: boolean): Autocompletion[] | undefined;
 }
 
 class IfNothingYetEnteredAutocompleter implements Autocompleter {
@@ -23,7 +24,7 @@ class IfNothingYetEnteredAutocompleter implements Autocompleter {
         this.otherwise = otherwise;
     }
 
-    getAutocompletion(pn: ParsedNode, _justCheck: boolean): Autocompletion[] | undefined {
+    getAutocompletion(pn: DefaultParsedNode, _justCheck: boolean): Autocompletion[] | undefined {
         if(pn.getParsedString().length === 0)
             return Autocompletion.literal(pn, [this.ifNothingYetEntered]);
 
@@ -45,10 +46,10 @@ class EntireSequenceCompleter implements Autocompleter {
         this.symbol2Autocompletion = symbol2Autocompletion;
     }
 
-    getAutocompletion(pn: ParsedNode, _justCheck: boolean): Autocompletion[] | undefined {
+    getAutocompletion(pn: DefaultParsedNode, _justCheck: boolean): Autocompletion[] | undefined {
         const alreadyEntered: string = pn.getParsedString();
 
-        const sequence: Rule = pn.getRule() as Rule;
+        const sequence: Rule = (pn as ParsedNode).getRule() as Rule;
         const children: Sym[] = sequence.getChildren();
 
         const entireSequenceCompletion = new Autocompletion.EntireSequence(pn);
@@ -76,7 +77,12 @@ class EntireSequenceCompleter implements Autocompleter {
             this.symbol2Autocompletion.set(key, autocompletionsForChild);
             entireSequenceCompletion.add(autocompletionsForChild);
         }
-        const idx: number | undefined = entireSequenceCompletion.getCompletion().indexOf("${");
+        // avoid to call getCompletion() more often than necessary
+        if(alreadyEntered.length === 0)
+            return entireSequenceCompletion.asArray();
+
+        const idx: number = entireSequenceCompletion.getCompletion(Autocompletion.Purpose.FOR_INSERTION).indexOf("${");
+ 			
         if(idx !== undefined && idx >= 0 && alreadyEntered.length > idx)
             return undefined;
         return entireSequenceCompletion.asArray();

@@ -19,7 +19,7 @@ function test01(): void {
     const autocompletions: Autocompletion[] = [];
     let root: ParsedNode = hlp.parse("My favorite color is ", autocompletions);
 
-    const actual: string[] = autocompletions.map(ac => ac.getCompletion());
+    const actual: string[] = autocompletions.map(ac => ac.getCompletion(Autocompletion.Purpose.FOR_INSERTION));
     const expected: string[] = [
         "(${red}, ${green}, ${blue})",
         "black",

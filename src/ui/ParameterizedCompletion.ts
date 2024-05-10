@@ -255,7 +255,7 @@ export class ParameterizedCompletion {
 
     static parseParameters(autocompletion: Autocompletion, ret: ParsedParam[], offset: number = 0): string {
         if(autocompletion instanceof Autocompletion.Literal)
-            return autocompletion.getCompletion()
+            return autocompletion.getCompletion(Autocompletion.Purpose.FOR_INSERTION)
 
         if(autocompletion instanceof Autocompletion.Parameterized) {
             const s: string = autocompletion.getParamName();
@@ -281,7 +281,7 @@ export class ParameterizedCompletion {
                 else if(n === 1) {
                     const single: Autocompletion = autocompletions[0];
                     if(single instanceof Autocompletion.Literal) {
-                        insertionString += single.getCompletion();
+                        insertionString += single.getCompletion(Autocompletion.Purpose.FOR_INSERTION);
                     }
                     else if(single instanceof Autocompletion.Parameterized) {
                         const parameterized: Autocompletion.Parameterized = single as Autocompletion.Parameterized;
@@ -293,7 +293,7 @@ export class ParameterizedCompletion {
                     }
                     else if(single instanceof Autocompletion.EntireSequence) {
                         const entire: Autocompletion.EntireSequence = single as Autocompletion.EntireSequence;
-                        const offs: number = insertionString.length;
+                        const offs: number = offset + insertionString.length;
                         const s: string = ParameterizedCompletion.parseParameters(entire, ret, offs);
                         insertionString += s;
                     }

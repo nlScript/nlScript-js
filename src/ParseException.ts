@@ -70,7 +70,7 @@ export class ParseException extends Error {
 			errorMessage += " ";
 		errorMessage += "^" + nl;
 
-        const exString: string[] = expectations.map(ac => ac.getCompletion())
+        const exString: string[] = expectations.map(ac => ac.getCompletion(Autocompletion.Purpose.FOR_INSERTION))
 
 		errorMessage += "Expected " + exString.toString();
 

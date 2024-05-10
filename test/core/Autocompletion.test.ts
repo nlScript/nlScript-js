@@ -43,7 +43,7 @@ function makeGrammar(): BNF {
 function getCompletionStrings(autocompletions: Autocompletion[]): string[] {
     const ret = new Array<string>(autocompletions.length);
     for(let i = 0; i < ret.length; i++) {
-        ret[i] = autocompletions[i].getCompletion() + " (" + autocompletions[i].getAlreadyEntered() + ")";
+        ret[i] = autocompletions[i].getCompletion(Autocompletion.Purpose.FOR_INSERTION) + " (" + autocompletions[i].getAlreadyEntered() + ")";
     }
     return ret;
 }
@@ -72,7 +72,7 @@ function test02(): void {
     const autocompletions: Autocompletion[] = [];
     parser.parse("The first digit of the number is ", autocompletions);
     expect(autocompletions.length).toBe(1);
-    expect(autocompletions[0].getCompletion()).toEqual("${first}");
+    expect(autocompletions[0].getCompletion(Autocompletion.Purpose.FOR_INSERTION)).toEqual("${first}");
 }
 
 function test03(): void {
@@ -81,7 +81,7 @@ function test03(): void {
     const autocompletions: Autocompletion[] = [];
     parser.parse("", autocompletions);
     expect(autocompletions.length).toBe(2);
-    expect(autocompletions[1].getCompletion()).toEqual("Define the output path");
+    expect(autocompletions[1].getCompletion(Autocompletion.Purpose.FOR_INSERTION)).toEqual("Define the output path");
 }
 
 function test04(): void {
@@ -134,7 +134,7 @@ function test05(): void {
     expect(root.getMatcher().state).toEqual(ParsingState.END_OF_INPUT);
 
     const expected: string[] = ["DAPI", "A488"];
-    expect(autocompletions.map(a => a.getCompletion())).toEqual(expected);
+    expect(autocompletions.map(a => a.getCompletion(Autocompletion.Purpose.FOR_INSERTION))).toEqual(expected);
 }
 
 function test06(): void {
@@ -161,7 +161,7 @@ function test06(): void {
     const pn = parser.parse(autocompletions);
     expect(pn.getMatcher().state).toEqual(ParsingState.END_OF_INPUT);
     expect(autocompletions.length).toBe(1);
-    expect(autocompletions[0].getCompletion()).toBe("Define channel");
+    expect(autocompletions[0].getCompletion(Autocompletion.Purpose.FOR_INSERTION)).toBe("Define channel");
 }
 
 function test07(): void {
@@ -183,7 +183,7 @@ function test07(): void {
     const root: ParsedNode = parser.parse("Excite with 10% at 3", autocompletions);
     expect(root.getMatcher().state).toBe(ParsingState.END_OF_INPUT);
     expect(autocompletions.length).toBe(1);
-    expect("385nm").toBe(autocompletions[0].getCompletion());
+    expect("385nm").toBe(autocompletions[0].getCompletion(Autocompletion.Purpose.FOR_INSERTION));
 }
 
 function test08(): void {
@@ -198,9 +198,9 @@ function test08(): void {
     const root: ParsedNode = parser.parse("My favorite color is ", autocompletions);
     expect(root.getMatcher().state).toBe(ParsingState.END_OF_INPUT);
     expect(autocompletions.length).toBe(3);
-    expect(autocompletions[0].getCompletion()).toBe("blue");
-    expect(autocompletions[1].getCompletion()).toBe("green");
-    expect(autocompletions[2].getCompletion()).toBe("(${r}, ${g}, ${b})")
+    expect(autocompletions[0].getCompletion(Autocompletion.Purpose.FOR_INSERTION)).toBe("blue");
+    expect(autocompletions[1].getCompletion(Autocompletion.Purpose.FOR_INSERTION)).toBe("green");
+    expect(autocompletions[2].getCompletion(Autocompletion.Purpose.FOR_INSERTION)).toBe("(${r}, ${g}, ${b})")
 }
 
 describe('TestAutocompletion', () => {

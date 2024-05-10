@@ -190,7 +190,7 @@ export class ACEditor {
         if(selection.main.empty)
             this.editor.dispatch({selection: { anchor: caret, head: caret - this.completer.completionPrefix().length }})
 
-        const repl = completion.getCompletion();
+        const repl = completion.getCompletion(Autocompletion.Purpose.FOR_INSERTION);
         if(repl.indexOf("${") >= 0) {
             this.cancelParameterizedCompletion();
             this.parameterizedCompletion = new ParameterizedCompletion(this.editor);
@@ -343,7 +343,7 @@ export class ACEditor {
         }
 
         if(autocompletions.length === 1) {
-            if(autoinsertSingleOption || autocompletions[0].getCompletion().indexOf("${") === undefined) {
+            if(autoinsertSingleOption || (autocompletion instanceof Autocompletion.Literal)) {
                 this.completer.setCompletions(autocompletions);
                 this.insertCompletion(autocompletions[0]);
                 this.completer.hidePopup();
@@ -352,19 +352,6 @@ export class ACEditor {
         else if(autocompletions.length > 1) {
             this.completer.setCompletions(autocompletions);
             const alreadyEntered: string = autocompletions[0].getAlreadyEntered();
-
-            const remainingText = entireText.substring(anchor);
-            let matchingLength = 0;
-            for(let ac of autocompletions) {
-                const remainingCompletion = ac.getCompletion().substring(alreadyEntered.length);
-                if(remainingText.startsWith(remainingCompletion)) {
-                    matchingLength = remainingCompletion.length;
-                    break;
-                }
-            }
-            if(matchingLength > 0) {
-                this.editor.dispatch({selection: {anchor: anchor, head: anchor + matchingLength }});
-            }
             this.completer.complete();
         }
         else {

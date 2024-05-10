@@ -21,18 +21,18 @@ function test01(): void {
 	root = hlp.parse("My birthday is in ", autocompletions);
     expect(root.getMatcher().state).toBe(ParsingState.END_OF_INPUT);
 	expect(autocompletions.length).toBe(12);
-    expect(autocompletions[0] .getCompletion()).toBe("January");
-    expect(autocompletions[1] .getCompletion()).toBe("February");
-    expect(autocompletions[2] .getCompletion()).toBe("March");
-    expect(autocompletions[3] .getCompletion()).toBe("April");
-    expect(autocompletions[4] .getCompletion()).toBe("May");
-    expect(autocompletions[5] .getCompletion()).toBe("June");
-    expect(autocompletions[6] .getCompletion()).toBe("July");
-    expect(autocompletions[7] .getCompletion()).toBe("August");
-    expect(autocompletions[8] .getCompletion()).toBe("September");
-    expect(autocompletions[9] .getCompletion()).toBe("October");
-    expect(autocompletions[10].getCompletion()).toBe("November");
-    expect(autocompletions[11].getCompletion()).toBe("December");
+    expect(autocompletions[0] .getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("January");
+    expect(autocompletions[1] .getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("February");
+    expect(autocompletions[2] .getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("March");
+    expect(autocompletions[3] .getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("April");
+    expect(autocompletions[4] .getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("May");
+    expect(autocompletions[5] .getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("June");
+    expect(autocompletions[6] .getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("July");
+    expect(autocompletions[7] .getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("August");
+    expect(autocompletions[8] .getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("September");
+    expect(autocompletions[9] .getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("October");
+    expect(autocompletions[10].getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("November");
+    expect(autocompletions[11].getCompletion(Autocompletion.Purpose.FOR_MENU)).toBe("December");
 }
 
 describe('TestMonth', () => {

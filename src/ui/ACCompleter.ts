@@ -1,8 +1,7 @@
-import { Autocompletion } from "src/core/Autocompletion";
+import { Autocompletion } from "../core/Autocompletion";
 import { CompletionContext, Completion, CompletionResult, autocompletion, selectedCompletion,  startCompletion, completionStatus, currentCompletions, moveCompletionSelection, closeCompletion } from "@codemirror/autocomplete";
 import { Extension, EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { ParameterizedCompletion, ParsedParam } from "./ParameterizedCompletion";
 
 function render(completion: Completion, _state: EditorState): Node | null {
     let text: string = completion.apply ? completion.apply as string : completion.label;
@@ -86,21 +85,22 @@ export class ACCompleter {
         const options = this.completions.map((a: Autocompletion) => {
             if(alreadyEnteredLength === undefined)
                 alreadyEnteredLength = a.getAlreadyEntered().length;
-            let apply = a.getCompletion();
+            let apply = a.getCompletion(Autocompletion.Purpose.FOR_MENU);
             let completion: string = apply;
 
-            const parsedParams: ParsedParam[] = [];
+            apply = apply.replaceAll("${", "<b>").replaceAll("}", "</b>");
 
-            const insertionString: string = ParameterizedCompletion.parseParameters(a, parsedParams);
-            if(parsedParams.length > 0) {
-                let sb = insertionString;
-                for(let i = parsedParams.length - 1; i >= 0; i--) {
-                    let param: ParsedParam = parsedParams[i];
-                    sb = sb.substring(0, param.i1) + "</b>" + sb.substring(param.i1);
-                    sb = sb.substring(0, param.i0) + "<b>" + sb.substring(param.i0);
-                }
-                apply = sb;
-            }
+            // const parsedParams: ParsedParam[] = [];
+            // const insertionString: string = ParameterizedCompletion.parseParameters(a, parsedParams);
+            // if(parsedParams.length > 0) {
+            //     let sb = insertionString;
+            //     for(let i = parsedParams.length - 1; i >= 0; i--) {
+            //         let param: ParsedParam = parsedParams[i];
+            //         sb = sb.substring(0, param.i1) + "</b>" + sb.substring(param.i1);
+            //         sb = sb.substring(0, param.i0) + "<b>" + sb.substring(param.i0);
+            //     }
+            //     apply = sb;
+            // }
 
             if(apply.startsWith("\n") || apply.startsWith("\r"))
                 apply = "&lt;new line&gt;";

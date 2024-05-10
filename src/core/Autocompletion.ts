@@ -2,6 +2,7 @@ import { Rule } from "src/ebnf/Rule";
 import { DefaultParsedNode } from "./DefaultParsedNode";
 import { Sym } from "./Symbol";
 import { ParsedNode } from "src/ParsedNode";
+import { Named } from "./Named";
 
 abstract class Autocompletion {
     public readonly symbolName: string;
@@ -21,7 +22,12 @@ abstract class Autocompletion {
         }
     }
 
-    abstract getCompletion(): string;
+    abstract getCompletion(purpose: Autocompletion.Purpose): string;
+
+    isEmptyLiteral(): boolean {
+        return (this instanceof Autocompletion.Literal) &&
+            this.getCompletion(Autocompletion.Purpose.FOR_INSERTION).length == 0;
+    }
 
     static literal(pn: DefaultParsedNode, literals: string[], prefix?: string, postfix?: string): Autocompletion[] {
         if(prefix === undefined)
@@ -39,7 +45,7 @@ abstract class Autocompletion {
         return new Autocompletion.Veto(pn).asArray();
     }
 
-    static doesAutocomplete(pn: ParsedNode) {
+    static doesAutocomplete(pn: DefaultParsedNode): Autocompletion[] {
         return new Autocompletion.DoesAutocomplete(pn).asArray();
     }
 
@@ -74,7 +80,7 @@ module Autocompletion {
             }
         }
 
-        override getCompletion(): string {
+        override getCompletion(_purpose: Purpose): string {
             return this.literal;
         }
     }
@@ -94,7 +100,7 @@ module Autocompletion {
             }
         }
 
-        override getCompletion(): string {
+        override getCompletion(_purpose: Purpose): string {
             return "${" + this.paramName + "}";
         }
 
@@ -107,13 +113,13 @@ module Autocompletion {
 
         public static readonly VETO: string = "VETO";
 
-        override getCompletion(): string {
+        override getCompletion(_purpose: Purpose): string {
             return Veto.VETO;
         }
     }
 
     export class DoesAutocomplete extends Autocompletion {
-        override getCompletion(): string {
+        override getCompletion(_purpose: Purpose): string {
             return "Something"; // the return value for DoesAutocomplete shouldn't matter
         }
     }
@@ -158,18 +164,37 @@ module Autocompletion {
             this.add([new Parameterized(symbol, name, parameter)]);
         }
 
-        override getCompletion(): string {
+        override getCompletion(purpose: Purpose): string {
             let autocompletionString: string = "";
             for(let i:number = 0; i < this.sequenceOfCompletions.length; i++) {
                 const autocompletions: Autocompletion[] = this.sequenceOfCompletions[i];
                 const n = autocompletions.length;
                 if(n > 1)
                     autocompletionString += "${" + this.sequence.getNameForChild(i) + "}";
-                else if(n == 1)
-                    autocompletionString += autocompletions[0].getCompletion();
+                else if(n == 1) {
+                    if(purpose === Purpose.FOR_MENU) {
+                        let ins: string;
+                        const ac: Autocompletion = autocompletions[0];
+                        if(ac instanceof Literal)
+                            ins = ac.getCompletion(Purpose.FOR_INSERTION);
+                        else
+                            ins = "${" + this.sequence.getNameForChild(i) + "}";
+                        if(ins === undefined || ins === Named.UNNAMED) 
+                            ins = "${" + this.sequence.getChildren()[i].getSymbol() + "}";
+                        
+                        autocompletionString += ins;
+                    }
+                    else if(purpose === Purpose.FOR_INSERTION)
+                        autocompletionString += autocompletions[0].getCompletion(purpose);
+                }
             }
             return autocompletionString;
         }
+    }
+
+    export enum Purpose {
+        FOR_MENU,
+        FOR_INSERTION
     }
 }
 
