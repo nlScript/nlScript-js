@@ -201,7 +201,7 @@ export class ACEditor {
             this.editor.dispatch(this.editor.state.replaceSelection(repl));
             this.completer.hidePopup();
             if(cursorIsAtEnd)
-                this.autocomplete();
+                setTimeout(() => this.autocomplete());
         }
     }
 
