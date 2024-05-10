@@ -17,7 +17,7 @@ abstract class Rule implements RepresentsSymbol {
     protected parsedChildNames: (string | undefined)[];
 
 	private evaluator: Evaluator; // (pn: DefaultParsedNode) => any; // Evaluator;
-	private autocompleter: Autocompleter;
+	private autocompleter: Autocompleter | undefined;
 	private _onSuccessfulParsed: ParseListener;
 
 	constructor(type: string, tgt: NonTerminal | undefined, ...children: Sym[]) {
@@ -53,11 +53,11 @@ abstract class Rule implements RepresentsSymbol {
 		return this;
 	}
 
-	getAutocompleter(): Autocompleter {
+	getAutocompleter(): Autocompleter | undefined{
 		return this.autocompleter;
 	}
 
-	setAutocompleter(autocompleter: Autocompleter): Rule {
+	setAutocompleter(autocompleter: Autocompleter | undefined): Rule {
 		this.autocompleter = autocompleter;
 		return this;
 	}

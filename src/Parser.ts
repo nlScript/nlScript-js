@@ -334,11 +334,16 @@ export class Parser {
 					: (symbol as NonTerminal).withName(variableName);
 
 			if(quantifierObject !== undefined) {
+				let autocompleter: Autocompleter | undefined = undefined;
+				// set a new fallback autocompleter. This is important for e.g. {bla:[a-z]:4} or {bla:digit:4}
+				if(typeObject instanceof Terminal)
+					autocompleter = Autocompleter.DEFAULT_INLINE_AUTOCOMPLETER;
+
 				const range: IntRange = quantifierObject as IntRange;
-				     if(range.equals(IntRange.STAR))     symbol = this.targetGrammar.star(    undefined, namedSymbol).getTarget();
-				else if(range.equals(IntRange.PLUS))     symbol = this.targetGrammar.plus(    undefined, namedSymbol).getTarget();
-				else if(range.equals(IntRange.OPTIONAL)) symbol = this.targetGrammar.optional(undefined, namedSymbol).getTarget();
-				else                                     symbol = this.targetGrammar.repeat(  undefined, namedSymbol, range.getLower(), range.getUpper()).getTarget();
+				     if(range.equals(IntRange.STAR))     symbol = this.targetGrammar.star(    undefined, namedSymbol).setAutocompleter(autocompleter).getTarget();
+				else if(range.equals(IntRange.PLUS))     symbol = this.targetGrammar.plus(    undefined, namedSymbol).setAutocompleter(autocompleter).getTarget();
+				else if(range.equals(IntRange.OPTIONAL)) symbol = this.targetGrammar.optional(undefined, namedSymbol).setAutocompleter(autocompleter).getTarget();
+				else                                     symbol = this.targetGrammar.repeat(  undefined, namedSymbol, range.getLower(), range.getUpper()).setAutocompleter(autocompleter).getTarget();
 				
                 namedSymbol = (symbol as NonTerminal).withName(variableName);
 			}
