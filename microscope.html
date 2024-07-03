@@ -60,7 +60,7 @@ h1 {
 </style>
 </head>
 <body>
-  <script src="dist/bundle.js"></script>
+  <script src="dist/index.cjs"></script>
 
   <h1>Natural Language Scripting Demo</h1>
 
@@ -90,14 +90,14 @@ h1 {
 
 <script>
 
-let lc = new nls.LanguageControl();
+let lc = new nlScript.LanguageControl();
 let parser = lc.initParser();
 
 let autocompletions = [];
 // parser.parse("My favourite color is ", autocompletions);
 // console.debug("autocompletions = " + autocompletions);
 
-const editor = new nls.ACEditor(parser, document.getElementById("nls-container"));
+const editor = new nlScript.ACEditor(parser, document.getElementById("nls-container"));
 editor.setBeforeRun(() => {
   lc.reset();
   document.getElementById("events").innerHTML = "";
@@ -110,7 +110,7 @@ lc.getMicroscope().setOnAcquire((position, channel) => {
   console.log("Move stage to position " + position);
   console.log("Apply channel settings:");
   console.log("  - set camera exposure time to " + channel.exposureTime);
-  for(const led of nls.LEDs) {
+  for(const led of nlScript.LEDs) {
       const ledSetting = channel.getLEDSetting(led);
       if(ledSetting === undefined)
           console.log("  - switch LED " + led.WAVELENGTH + " off");
@@ -138,7 +138,7 @@ lc.getMicroscope().setOnAcquire((position, channel) => {
   innerHTML += 'Channel settings: ' + channel.name + ':<br>';
   innerHTML += '<ul>'
   innerHTML += '<li>Exposure time: ' + channel.exposureTime + 'ms</li>';
-  for(const led of nls.LEDs) {
+  for(const led of nlScript.LEDs) {
     const ledSetting = channel.getLEDSetting(led);
     if(ledSetting !== undefined)
       innerHTML += '<li>LED ' + led.WAVELENGTH + ': ' + ledSetting.intensity + '%</li>';
