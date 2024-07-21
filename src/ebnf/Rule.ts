@@ -1,12 +1,12 @@
-import { Autocompleter } from "../Autocompleter";
-import { RepresentsSymbol } from "../core/RepresentsSymbol";
-import { BNF } from "../core/BNF";
-import { NonTerminal } from "../core/NonTerminal";
-import { Sym } from "../core/Symbol";
-import { Evaluator } from "../Evaluator";
-import { EBNFProduction } from "./EBNFProduction";
-import { NamedRule } from "./NamedRule";
-import { ParseListener } from "./ParseListener";
+import { Autocompleter } from "../Autocompleter.js";
+import { RepresentsSymbol } from "../core/RepresentsSymbol.js";
+import { BNF } from "../core/BNF.js";
+import { NonTerminal } from "../core/NonTerminal.js";
+import { Sym } from "../core/Symbol.js";
+import { Evaluator } from "../Evaluator.js";
+import { EBNFProduction } from "./EBNFProduction.js";
+import { NamedRule } from "./NamedRule.js";
+import { ParseListener } from "./ParseListener.js";
 
 abstract class Rule implements RepresentsSymbol {
 

@@ -1,20 +1,19 @@
-import { EditorView } from "codemirror";
-import { highlight_extension, ParameterizedCompletion, ParsedParam } from "./ParameterizedCompletion";
-import { error_highlight_extension, ErrorHighlight } from "./ErrorHighlight";
+import { highlight_extension, ParameterizedCompletion, ParsedParam } from "./ParameterizedCompletion.js";
+import { error_highlight_extension, ErrorHighlight } from "./ErrorHighlight.js";
 import { StateEffect } from "@codemirror/state";
-import { Parser } from "../Parser";
-import { ParsedNode } from "../ParsedNode";
-import { Autocompletion } from "../core/Autocompletion";
-import { ACCompleter } from "./ACCompleter";
-import { ParseException } from "../ParseException";
-import { Matcher } from "../core/Matcher";
-import { BNF } from "../core/BNF";
-import { Sym } from "../core/Symbol";
-import { NonTerminal } from "../core/NonTerminal";
+import { Parser } from "../Parser.js";
+import { ParsedNode } from "../ParsedNode.js";
+import { Autocompletion } from "../core/Autocompletion.js";
+import { ACCompleter } from "./ACCompleter.js";
+import { ParseException } from "../ParseException.js";
+import { Matcher } from "../core/Matcher.js";
+import { BNF } from "../core/BNF.js";
+import { Sym } from "../core/Symbol.js";
+import { NonTerminal } from "../core/NonTerminal.js";
 
 import {keymap, highlightSpecialChars, drawSelection, highlightActiveLine, dropCursor,
     rectangularSelection, crosshairCursor,
-    lineNumbers, highlightActiveLineGutter} from "@codemirror/view"
+    lineNumbers, highlightActiveLineGutter, EditorView} from "@codemirror/view"
 import {Extension, EditorState} from "@codemirror/state"
 import {defaultHighlightStyle, syntaxHighlighting, indentOnInput, bracketMatching,
     foldGutter, foldKeymap} from "@codemirror/language"

@@ -1,7 +1,7 @@
-import { BNF } from "./BNF";
-import { Named } from "./Named";
-import { Production } from "./Production";
-import { Sym } from "./Symbol";
+import { BNF } from "./BNF.js";
+import { Named } from "./Named.js";
+import { Production } from "./Production.js";
+import { Sym } from "./Symbol.js";
 
 class NonTerminal extends Sym {
 

@@ -1,5 +1,5 @@
-import { RepresentsSymbol } from "./RepresentsSymbol";
-import { Sym } from "./Symbol";
+import { RepresentsSymbol } from "./RepresentsSymbol.js";
+import { Sym } from "./Symbol.js";
 
 export class Named<T extends RepresentsSymbol> {
 

@@ -1,15 +1,15 @@
-import { ParsedNode } from "./ParsedNode";
-import { DefaultParsedNode } from "./core/DefaultParsedNode";
-import { Autocompletion } from "./core/Autocompletion";
-import { BNF } from "./core/BNF";
-import { Lexer } from "./core/Lexer";
-import { Production } from "./core/Production";
-import { RDParser } from "./core/RDParser";
-import { Sym } from "./core/Symbol";
-import { EBNFCore } from "./ebnf/EBNFCore";
-import { EBNFParsedNodeFactory } from "./ebnf/EBNFParsedNodeFactory";
-import { Rule } from "./ebnf/Rule";
-import { Sequence } from "./ebnf/Sequence";
+import { ParsedNode } from "./ParsedNode.js";
+import { DefaultParsedNode } from "./core/DefaultParsedNode.js";
+import { Autocompletion } from "./core/Autocompletion.js";
+import { BNF } from "./core/BNF.js";
+import { Lexer } from "./core/Lexer.js";
+import { Production } from "./core/Production.js";
+import { RDParser } from "./core/RDParser.js";
+import { Sym } from "./core/Symbol.js";
+import { EBNFCore } from "./ebnf/EBNFCore.js";
+import { EBNFParsedNodeFactory } from "./ebnf/EBNFParsedNodeFactory.js";
+import { Rule } from "./ebnf/Rule.js";
+import { Sequence } from "./ebnf/Sequence.js";
 
 interface Autocompleter {
     getAutocompletion(n: DefaultParsedNode, justCheck: boolean): Autocompletion[] | undefined;

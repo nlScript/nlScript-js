@@ -1,9 +1,6 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
+const path = require('path');
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-export default {
+module.exports = {
   mode: 'production',
   entry: './src/index.ts',
   devtool: 'inline-source-map',
@@ -11,22 +8,30 @@ export default {
     rules: [
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: [{
+          loader: 'ts-loader',
+          options: {
+            configFile: "tsconfig-umd.json"
+          }
+        }],
         exclude: /node_modules/,
       },
     ],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    extensionAlias: {
+      '.js': ['.js', '.ts'],
+    },
   },
   output: {
-    filename: 'index.cjs',
+    filename: 'nlScript.js',
     library: {
       name: 'nlScript',
       type: 'umd'
     },
     globalObject: 'this',
-    path: path.resolve(__dirname, 'dist'),
-  },
+    path: path.resolve(__dirname, 'dist/umd'),
+  }
 };
 

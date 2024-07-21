@@ -1,4 +1,4 @@
-import { Sym } from "./Symbol";
+import { Sym } from "./Symbol.js";
 
 export interface RepresentsSymbol {
     getRepresentedSymbol(): Sym;

@@ -1,8 +1,8 @@
-import { Autocompletion } from "./core/Autocompletion";
-import { BNF } from "./core/BNF";
-import { DefaultParsedNode } from "./core/DefaultParsedNode";
-import { Lexer } from "./core/Lexer";
-import { RDParser } from "./core/RDParser";
+import { Autocompletion } from "./core/Autocompletion.js";
+import { BNF } from "./core/BNF.js";
+import { DefaultParsedNode } from "./core/DefaultParsedNode.js";
+import { Lexer } from "./core/Lexer.js";
+import { RDParser } from "./core/RDParser.js";
 
 export class ParseException extends Error {
 

@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig-base",
+  "comment": "The module and moduleResolution settings are motivated by https://www.typescriptlang.org/docs/handbook/modules/guides/choosing-compiler-options.html#im-writing-a-library",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Node10",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": false,
+    "outDir": "./dist/types/",
+    "emitDeclarationOnly": true,
+  },
+  "include": ["src"]
+}

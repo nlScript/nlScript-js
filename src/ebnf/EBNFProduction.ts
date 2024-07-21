@@ -1,7 +1,7 @@
-import { NonTerminal } from "../core/NonTerminal";
-import { Production } from "../core/Production";
-import { Sym } from "../core/Symbol";
-import { Rule } from "./Rule";
+import { NonTerminal } from "../core/NonTerminal.js";
+import { Production } from "../core/Production.js";
+import { Sym } from "../core/Symbol.js";
+import { Rule } from "./Rule.js";
 
 class EBNFProduction extends Production {
     

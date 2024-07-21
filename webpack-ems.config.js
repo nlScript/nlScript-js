@@ -17,7 +17,10 @@ export default {
     ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.ts', '.tsx', '.js'],
+    extensionAlias: {
+      '.js': ['.js', '.ts'],
+    },
   },
   output: {
     filename: 'index.js',

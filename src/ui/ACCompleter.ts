@@ -1,4 +1,4 @@
-import { Autocompletion } from "../core/Autocompletion";
+import { Autocompletion } from "../core/Autocompletion.js";
 import { CompletionContext, Completion, CompletionResult, autocompletion, selectedCompletion,  startCompletion, completionStatus, currentCompletions, moveCompletionSelection, closeCompletion } from "@codemirror/autocomplete";
 import { Extension, EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";

@@ -1,14 +1,14 @@
-import { ParsedNode } from "../ParsedNode";
-import { BNF } from "../core/BNF";
-import { NonTerminal } from "../core/NonTerminal";
-import { AstBuilder, Production } from "../core/Production";
-import { Sym } from "../core/Symbol";
-import { Terminal } from "../core/Terminal";
-import { Evaluator } from "../Evaluator";
-import { IntRange } from "../util/IntRange";
-import { Repeat } from "./Repeat";
-import { Rule } from "./Rule";
-import { Star } from "./Star";
+import { ParsedNode } from "../ParsedNode.js";
+import { BNF } from "../core/BNF.js";
+import { NonTerminal } from "../core/NonTerminal.js";
+import { AstBuilder, Production } from "../core/Production.js";
+import { Sym } from "../core/Symbol.js";
+import { Terminal } from "../core/Terminal.js";
+import { Evaluator } from "../Evaluator.js";
+import { IntRange } from "../util/IntRange.js";
+import { Repeat } from "./Repeat.js";
+import { Rule } from "./Rule.js";
+import { Star } from "./Star.js";
 
 export class Join extends Rule {
     private readonly open: Sym | undefined;

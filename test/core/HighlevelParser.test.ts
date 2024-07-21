@@ -1,24 +1,24 @@
-import { ParsedNode } from "../../src/ParsedNode";
-import { Parser } from "../../src/Parser";
-import { Named } from "../../src/core/Named";
-import { BNF } from "../../src/core/BNF";
-import { DefaultParsedNode } from "../../src/core/DefaultParsedNode";
-import { Lexer } from "../../src/core/Lexer";
-import { NonTerminal } from "../../src/core/NonTerminal";
-import { ParsingState } from "../../src/core/ParsingState";
-import { RDParser } from "../../src/core/RDParser";
-import { CharacterClass, Terminal, Literal } from "../../src/core/Terminal";
-import { EBNF } from "../../src/ebnf/EBNF";
-import { EBNFCore } from "../../src/ebnf/EBNFCore";
-import { EBNFParsedNodeFactory } from "../../src/ebnf/EBNFParsedNodeFactory";
-import { Plus } from "../../src/ebnf/Plus";
-import { Repeat } from "../../src/ebnf/Repeat";
-import { Rule } from "../../src/ebnf/Rule";
-import { Star } from "../../src/ebnf/Star";
-import { IntRange } from "../../src/util/IntRange";
-import { ParseException } from "../../src/ParseException";
-import { Join } from "../../src/ebnf/Join";
-import { Sym } from "src";
+import { ParsedNode } from "../../src/ParsedNode.js";
+import { Parser } from "../../src/Parser.js";
+import { Named } from "../../src/core/Named.js";
+import { BNF } from "../../src/core/BNF.js";
+import { DefaultParsedNode } from "../../src/core/DefaultParsedNode.js";
+import { Lexer } from "../../src/core/Lexer.js";
+import { NonTerminal } from "../../src/core/NonTerminal.js";
+import { ParsingState } from "../../src/core/ParsingState.js";
+import { RDParser } from "../../src/core/RDParser.js";
+import { CharacterClass, Terminal, Literal } from "../../src/core/Terminal.js";
+import { EBNF } from "../../src/ebnf/EBNF.js";
+import { EBNFCore } from "../../src/ebnf/EBNFCore.js";
+import { EBNFParsedNodeFactory } from "../../src/ebnf/EBNFParsedNodeFactory.js";
+import { Plus } from "../../src/ebnf/Plus.js";
+import { Repeat } from "../../src/ebnf/Repeat.js";
+import { Rule } from "../../src/ebnf/Rule.js";
+import { Star } from "../../src/ebnf/Star.js";
+import { IntRange } from "../../src/util/IntRange.js";
+import { ParseException } from "../../src/ParseException.js";
+import { Join } from "../../src/ebnf/Join.js";
+import { Sym } from "../../src/core/Symbol.js";
 
 
 function evaluate(grammar: EBNF, input: string): any {

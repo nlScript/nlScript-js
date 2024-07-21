@@ -1,1 +1,1 @@
-export * from "./IntRange";
+export * from "./IntRange.js";

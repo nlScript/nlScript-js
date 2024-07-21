@@ -1,6 +1,6 @@
-import { Named } from "../core/Named";
-import { ParseListener } from "./ParseListener";
-import { Rule } from "./Rule";
+import { Named } from "../core/Named.js";
+import { ParseListener } from "./ParseListener.js";
+import { Rule } from "./Rule.js";
 
 export class NamedRule extends Named<Rule> {
     

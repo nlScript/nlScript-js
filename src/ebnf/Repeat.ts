@@ -1,10 +1,10 @@
-import { AstBuilder } from "../core/Production";
-import { ParsedNode } from "../ParsedNode";
-import { BNF } from "../core/BNF";
-import { NonTerminal } from "../core/NonTerminal";
-import { Sym } from "../core/Symbol";
-import { Evaluator } from "../Evaluator";
-import { Rule } from "./Rule";
+import { AstBuilder } from "../core/Production.js";
+import { ParsedNode } from "../ParsedNode.js";
+import { BNF } from "../core/BNF.js";
+import { NonTerminal } from "../core/NonTerminal.js";
+import { Sym } from "../core/Symbol.js";
+import { Evaluator } from "../Evaluator.js";
+import { Rule } from "./Rule.js";
 
 export class Repeat extends Rule {
     private readonly from: number;

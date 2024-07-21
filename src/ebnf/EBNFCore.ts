@@ -1,21 +1,21 @@
-import { Autocompleter, IfNothingYetEnteredAutocompleter } from "../Autocompleter";
-import { Named } from "../core/Named";
-import { BNF } from "../core/BNF";
-import { NonTerminal } from "../core/NonTerminal";
-import { Sym } from "../core/Symbol";
-import { Terminal } from "../core/Terminal";
-import { IntRange } from "../util/IntRange";
-import { Join } from "./Join";
-import { NamedRule } from "./NamedRule";
-import { Optional } from "./Optional";
-import { Or } from "./Or";
-import { Plus } from "./Plus";
-import { Repeat } from "./Repeat";
-import { Rule } from "./Rule";
-import { Sequence } from "./Sequence";
-import { Star } from "./Star";
-import { Evaluator } from "../Evaluator"
-import { Autocompletion } from "../core/Autocompletion";
+import { Autocompleter, IfNothingYetEnteredAutocompleter } from "../Autocompleter.js";
+import { Named } from "../core/Named.js";
+import { BNF } from "../core/BNF.js";
+import { NonTerminal } from "../core/NonTerminal.js";
+import { Sym } from "../core/Symbol.js";
+import { Terminal } from "../core/Terminal.js";
+import { IntRange } from "../util/IntRange.js";
+import { Join } from "./Join.js";
+import { NamedRule } from "./NamedRule.js";
+import { Optional } from "./Optional.js";
+import { Or } from "./Or.js";
+import { Plus } from "./Plus.js";
+import { Repeat } from "./Repeat.js";
+import { Rule } from "./Rule.js";
+import { Sequence } from "./Sequence.js";
+import { Star } from "./Star.js";
+import { Evaluator } from "../Evaluator.js"
+import { Autocompletion } from "../core/Autocompletion.js";
 
 export class EBNFCore {
 

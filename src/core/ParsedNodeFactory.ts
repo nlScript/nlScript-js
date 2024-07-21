@@ -1,7 +1,7 @@
-import { DefaultParsedNode } from "./DefaultParsedNode";
-import { Matcher } from "./Matcher";
-import { Production } from "./Production";
-import { Sym } from "./Symbol";
+import { DefaultParsedNode } from "./DefaultParsedNode.js";
+import { Matcher } from "./Matcher.js";
+import { Production } from "./Production.js";
+import { Sym } from "./Symbol.js";
 
 interface ParsedNodeFactory {
     createNode(matcher: Matcher, symbol: Sym, production: Production | undefined): DefaultParsedNode

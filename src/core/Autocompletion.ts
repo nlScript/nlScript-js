@@ -1,8 +1,8 @@
-import { Rule } from "src/ebnf/Rule";
-import { DefaultParsedNode } from "./DefaultParsedNode";
-import { Sym } from "./Symbol";
-import { ParsedNode } from "src/ParsedNode";
-import { Named } from "./Named";
+import { Rule } from "src/ebnf/Rule.js";
+import { DefaultParsedNode } from "./DefaultParsedNode.js";
+import { Sym } from "./Symbol.js";
+import { ParsedNode } from "src/ParsedNode.js";
+import { Named } from "./Named.js";
 
 abstract class Autocompletion {
     public readonly symbolName: string;

@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig-base",
+  "comment": "The module and moduleResolution settings are motivated by https://www.typescriptlang.org/docs/handbook/modules/guides/choosing-compiler-options.html#im-writing-a-library",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": true,
+    "outDir": "./dist/umd/",
+  },
+  "include": ["src"]
+}

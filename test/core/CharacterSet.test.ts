@@ -1,6 +1,6 @@
-import { ParsedNode } from "../../src/ParsedNode";
-import { Parser } from "../../src/Parser";
-import { ParsingState } from "../../src/core/ParsingState";
+import { ParsedNode } from "../../src/ParsedNode.js";
+import { Parser } from "../../src/Parser.js";
+import { ParsingState } from "../../src/core/ParsingState.js";
 
 function test01(): void {
     const hlp: Parser = new Parser();

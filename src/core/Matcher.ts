@@ -1,4 +1,4 @@
-import { ParsingState } from './ParsingState';
+import { ParsingState } from './ParsingState.js';
 
 class Matcher {
 

@@ -1,10 +1,10 @@
-import { Literal, Terminal } from "./Terminal";
-import { Matcher } from "./Matcher";
-import { Production } from "./Production";
-import { Sym } from "./Symbol";
-import { Autocompleter } from "../Autocompleter";
-import { Named } from "./Named";
-import { Autocompletion } from "./Autocompletion";
+import { Literal, Terminal } from "./Terminal.js";
+import { Matcher } from "./Matcher.js";
+import { Production } from "./Production.js";
+import { Sym } from "./Symbol.js";
+import { Autocompleter } from "../Autocompleter.js";
+import { Named } from "./Named.js";
+import { Autocompletion } from "./Autocompletion.js";
 
 class DefaultParsedNode {
 

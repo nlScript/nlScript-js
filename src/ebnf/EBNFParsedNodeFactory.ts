@@ -1,9 +1,9 @@
-import { ParsedNode } from "../ParsedNode";
-import { ParsedNodeFactory } from "../core/ParsedNodeFactory";
-import { DefaultParsedNode } from "../core/DefaultParsedNode";
-import { Matcher } from "../core/Matcher";
-import { Production } from "../core/Production";
-import { Sym } from "../core/Symbol";
+import { ParsedNode } from "../ParsedNode.js";
+import { ParsedNodeFactory } from "../core/ParsedNodeFactory.js";
+import { DefaultParsedNode } from "../core/DefaultParsedNode.js";
+import { Matcher } from "../core/Matcher.js";
+import { Production } from "../core/Production.js";
+import { Sym } from "../core/Symbol.js";
 
 module EBNFParsedNodeFactory {
     export const INSTANCE: ParsedNodeFactory = {

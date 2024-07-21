@@ -1,9 +1,9 @@
-import { AstBuilder } from "../core/Production";
-import { ParsedNode } from "../ParsedNode";
-import { BNF } from "../core/BNF";
-import { NonTerminal } from "../core/NonTerminal";
-import { Sym } from "../core/Symbol";
-import { Rule } from "./Rule";
+import { AstBuilder } from "../core/Production.js";
+import { ParsedNode } from "../ParsedNode.js";
+import { BNF } from "../core/BNF.js";
+import { NonTerminal } from "../core/NonTerminal.js";
+import { Sym } from "../core/Symbol.js";
+import { Rule } from "./Rule.js";
 
 export class Sequence extends Rule {
     constructor(tgt: NonTerminal | undefined, ...children: Sym[]) {

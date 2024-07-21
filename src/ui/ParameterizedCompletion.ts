@@ -1,8 +1,7 @@
 import { StateEffect, StateField, Range, RangeCursor } from "@codemirror/state"
-import { Decoration, DecorationSet, WidgetType } from "@codemirror/view"
-import { EditorView } from "codemirror";
-import { Autocompletion } from "../core/Autocompletion";
-import { Rule } from "src/ebnf/Rule";
+import { Decoration, DecorationSet, WidgetType, EditorView } from "@codemirror/view"
+import { Autocompletion } from "../core/Autocompletion.js";
+import { Rule } from "src/ebnf/Rule.js";
 
 // code mirror effect that you will use to define the effect you want (the decoration)
 const addHighlight = StateEffect.define<Range<Decoration>[]>();

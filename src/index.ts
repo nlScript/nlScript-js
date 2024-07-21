@@ -1,17 +1,17 @@
-import { Parser } from "./Parser";
-import { ACEditor } from "./ui/ACEditor";
-import { makeMicroscopeParser } from "./microscope/LanguageControl";
+import { Parser } from "./Parser.js";
+import { ACEditor } from "./ui/ACEditor.js";
+import { makeMicroscopeParser } from "./microscope/LanguageControl.js";
 
-export * from "./core/index";
-export * from "./ebnf/index";
-export * from "./util/index";
-export * from "./microscope/index";
-export * from "./ui/index";
-export * from "./Autocompleter";
-export * from "./Evaluator";
-export * from "./ParsedNode";
-export * from "./Parser";
-export * from "./ParseException";
+export * from "./core/index.js";
+export * from "./ebnf/index.js";
+export * from "./util/index.js";
+export * from "./microscope/index.js";
+export * from "./ui/index.js";
+export * from "./Autocompleter.js";
+export * from "./Evaluator.js";
+export * from "./ParsedNode.js";
+export * from "./Parser.js";
+export * from "./ParseException.js";
 
 
 function makeSimpleParser(): Parser {

@@ -1,3 +1,3 @@
-export * from "./ACCompleter"
-export * from "./ACEditor"
-export * from "./ParameterizedCompletion"
+export * from "./ACCompleter.js"
+export * from "./ACEditor.js"
+export * from "./ParameterizedCompletion.js"

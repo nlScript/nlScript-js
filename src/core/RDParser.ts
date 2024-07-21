@@ -1,16 +1,16 @@
-import { Autocompleter } from "../Autocompleter";
-import { Autocompletion } from "./Autocompletion";
-import { ParsedNodeFactory } from "./ParsedNodeFactory";
-import { BNF } from "./BNF";
-import { DefaultParsedNode } from "./DefaultParsedNode";
-import { Lexer } from "./Lexer";
-import { Matcher } from "./Matcher";
-import { NonTerminal } from "./NonTerminal";
-import { ParsingState } from "./ParsingState";
-import { Production } from "./Production";
-import { Sym } from "./Symbol";
-import { Terminal } from "./Terminal";
-import { ParseException } from "../ParseException";
+import { Autocompleter } from "../Autocompleter.js";
+import { Autocompletion } from "./Autocompletion.js";
+import { ParsedNodeFactory } from "./ParsedNodeFactory.js";
+import { BNF } from "./BNF.js";
+import { DefaultParsedNode } from "./DefaultParsedNode.js";
+import { Lexer } from "./Lexer.js";
+import { Matcher } from "./Matcher.js";
+import { NonTerminal } from "./NonTerminal.js";
+import { ParsingState } from "./ParsingState.js";
+import { Production } from "./Production.js";
+import { Sym } from "./Symbol.js";
+import { Terminal } from "./Terminal.js";
+import { ParseException } from "../ParseException.js";
 
 class RDParser {
     private readonly parsedNodeFactory: ParsedNodeFactory;

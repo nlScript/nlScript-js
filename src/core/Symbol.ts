@@ -1,4 +1,4 @@
-import { RepresentsSymbol } from "./RepresentsSymbol";
+import { RepresentsSymbol } from "./RepresentsSymbol.js";
 
 abstract class Sym implements RepresentsSymbol{
     

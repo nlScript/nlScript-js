@@ -1,13 +1,13 @@
-import { ParseException } from "../../src/ParseException";
-import { BNF } from "../../src/core/BNF";
-import { DefaultParsedNode } from "../../src/core/DefaultParsedNode";
-import { Lexer } from "../../src/core/Lexer";
-import { ParsingState } from "../../src/core/ParsingState";
-import { RDParser } from "../../src/core/RDParser";
-import { Terminal } from "../../src/core/Terminal";
-import { EBNFCore } from "../../src/ebnf/EBNFCore";
-import { EBNFParsedNodeFactory } from "../../src/ebnf/EBNFParsedNodeFactory";
-import { Rule } from "../../src/ebnf/Rule";
+import { ParseException } from "../../src/ParseException.js";
+import { BNF } from "../../src/core/BNF.js";
+import { DefaultParsedNode } from "../../src/core/DefaultParsedNode.js";
+import { Lexer } from "../../src/core/Lexer.js";
+import { ParsingState } from "../../src/core/ParsingState.js";
+import { RDParser } from "../../src/core/RDParser.js";
+import { Terminal } from "../../src/core/Terminal.js";
+import { EBNFCore } from "../../src/ebnf/EBNFCore.js";
+import { EBNFParsedNodeFactory } from "../../src/ebnf/EBNFParsedNodeFactory.js";
+import { Rule } from "../../src/ebnf/Rule.js";
 
 
 function makeGrammar(): BNF {

@@ -63,6 +63,9 @@ The Natural Language Scripting framework offers a convenient way to define the s
 
 In this example we state that we expect a literal "Apply Gaussian blurring with a standard deviation of ", followed by a floating point number, which we name "stddev" for later reference, followed by the literal "pixel(s).".
 
+Apart from using it in HTML pages in the browser via the JavaScript `<script>` tag, nlScript can be used in Node.js and is compatible with both the ES6 and CommonJS module systems. Please find examples below.
+
+
 
 
 ## Motivation
@@ -99,30 +102,95 @@ Apply Gaussian blurring with a standard deviation of 1 pixel(s).
 * [More detail about custom types](https://nlScript.github.io/nlScript-java/custom-types.html)
 
 
-## Development information
 
-### Build bundle
+## Using Node.js
 
-Browser version:
+### CommonJS module system
 ```
-npx webpack -c webpack-umd.config.js
+npm init -y
+npm install @nlscript/nlScript-js
+```
+Now save the following script as `index.js`:
+```
+l = require('@nlScript/nlScript-js');
+
+let parser = new l.Parser()
+parser.defineType("my-color", "blue", undefined);
+parser.defineType("my-color", "green", undefined);
+parser.defineSentence("My favourite color is {color:my-color}.", undefined);
+
+let autocompletions = []
+parser.parse("My favourite color is ", autocompletions);
+console.log(autocompletions);
+```
+Run it via
+```
+node index.js
 ```
 
-Node.js version:
+### ES6 module system
 ```
-npx webpack -c webpack-ems.config.js
+npm init -y
+npm pkg set type="module"
+npm install @nlscript/nlScript-js
+```
+Now save the following script as `index.js`:
+```
+import { Parser } from '@nlscript/nlScript-js';
+
+let parser = new Parser()
+parser.defineType("my-color", "blue", undefined);
+parser.defineType("my-color", "green", undefined);
+parser.defineSentence("My favourite color is {color:my-color}.", undefined);
+
+let autocompletions = []
+parser.parse("My favourite color is ", autocompletions);
+console.log(autocompletions);
+```
+Run it via
+```
+node index.js
 ```
 
-### Run all tests
+### Typescript
 ```
-./node_modules/.bin/jest
+npm init -y
+npm install @nlscript/nlScript-js
+npm install --save-dev typescript ts-loader
+```
+Now save the following script as `index.ts`:
+```
+import { Parser, Autocompletion } from '@nlscript/nlScript-js';
+
+const parser = new Parser()
+parser.defineType("my-color", "blue", undefined);
+parser.defineType("my-color", "green", undefined);
+parser.defineSentence("My favourite color is {color:my-color}.", undefined);
+
+const autocompletions: Autocompletion[] = [];
+parser.parse("My favourite color is ", autocompletions);
+console.log(autocompletions);
+```
+Now transpile it to JavaScript using tsc. First create a default tsc configuration file:
+```
+npx tsc --init
+```
+and then transpile it:
+```
+npx tsc
 ```
 
-### Run a specific test
+Now run it via
 ```
-./node_modules/.bin/jest TestAutocompletion
+node index.js
 ```
 
 
 
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+nlScript-js depends on CodeMirror, which is also licensed under the MIT license, copyright by Marijn Haverbeke <marijn@haverbeke.berlin>, Adrian Heine <mail@adrianheine.de>, and others (https://codemirror.net).
 

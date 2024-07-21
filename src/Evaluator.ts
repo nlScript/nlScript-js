@@ -1,5 +1,5 @@
-import { ParsedNode } from "./ParsedNode";
-import { DefaultParsedNode } from "./core";
+import { ParsedNode } from "./ParsedNode.js";
+import { DefaultParsedNode } from "./core/DefaultParsedNode.js";
 
 export type Evaluator = (pn: ParsedNode) => any;
 

@@ -1,9 +1,9 @@
-import { Parser } from "../Parser";
-import { IfNothingYetEnteredAutocompleter } from "../Autocompleter";
-import { ALL_CHANNELS, ALL_POSITIONS, Binning, Channel, LED, LEDSetting, LEDs, Lens, MagnificationChanger, Microscope, Position } from "./Microscope";
-import { Timeline } from "./Timeline";
-import { Interpolator } from "./Interpolator";
-import { Autocompletion } from "../core/Autocompletion";
+import { Parser } from "../Parser.js";
+import { IfNothingYetEnteredAutocompleter } from "../Autocompleter.js";
+import { ALL_CHANNELS, ALL_POSITIONS, Binning, Channel, LED, LEDSetting, LEDs, Lens, MagnificationChanger, Microscope, Position } from "./Microscope.js";
+import { Timeline } from "./Timeline.js";
+import { Interpolator } from "./Interpolator.js";
+import { Autocompletion } from "../core/Autocompletion.js";
 
 
 export class LanguageControl {

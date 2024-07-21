@@ -1,8 +1,8 @@
-import { Named } from './Named';
-import { Lexer } from './Lexer';
-import { Matcher } from './Matcher';
-import { ParsingState } from './ParsingState';
-import { Sym } from './Symbol';
+import { Named } from './Named.js';
+import { Lexer } from './Lexer.js';
+import { Matcher } from './Matcher.js';
+import { ParsingState } from './ParsingState.js';
+import { Sym } from './Symbol.js';
 
 
 abstract class Terminal extends Sym {

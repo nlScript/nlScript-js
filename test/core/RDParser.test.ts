@@ -1,12 +1,12 @@
-import { BNF } from "../../src/core/BNF";
-import { Lexer } from "../../src/core/Lexer";
-import { NonTerminal } from "../../src/core/NonTerminal";
-import { ParsingState } from "../../src/core/ParsingState";
-import { Production } from "../../src/core/Production";
-import { RDParser } from "../../src/core/RDParser";
-import { Terminal } from "../../src/core/Terminal";
-import { DefaultParsedNode } from "../../src/core/DefaultParsedNode";
-import { ParsedNodeFactory } from "../../src/core/ParsedNodeFactory";
+import { BNF } from "../../src/core/BNF.js";
+import { Lexer } from "../../src/core/Lexer.js";
+import { NonTerminal } from "../../src/core/NonTerminal.js";
+import { ParsingState } from "../../src/core/ParsingState.js";
+import { Production } from "../../src/core/Production.js";
+import { RDParser } from "../../src/core/RDParser.js";
+import { Terminal } from "../../src/core/Terminal.js";
+import { DefaultParsedNode } from "../../src/core/DefaultParsedNode.js";
+import { ParsedNodeFactory } from "../../src/core/ParsedNodeFactory.js";
 
 
 describe('testing index file', () => {

@@ -1,6 +1,5 @@
 import { StateEffect, StateField, Range, RangeCursor } from "@codemirror/state"
-import { Decoration, DecorationSet, WidgetType } from "@codemirror/view"
-import { EditorView } from "codemirror";
+import { Decoration, DecorationSet, WidgetType, EditorView } from "@codemirror/view"
 
 // code mirror effect that you will use to define the effect you want (the decoration)
 const addErrorEffect = StateEffect.define<Range<Decoration>[]>();

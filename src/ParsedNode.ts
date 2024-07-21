@@ -1,12 +1,12 @@
-import { Autocompletion } from "./core";
-import { DefaultParsedNode } from "./core/DefaultParsedNode";
-import { Matcher } from "./core/Matcher";
-import { ParsingState } from "./core/ParsingState";
-import { Production } from "./core/Production";
-import { Sym } from "./core/Symbol";
-import { EBNFProduction } from "./ebnf/EBNFProduction";
-import { ParseListener } from "./ebnf/ParseListener";
-import { Rule } from "./ebnf/Rule";
+import { Autocompletion } from "./core/Autocompletion.js";
+import { DefaultParsedNode } from "./core/DefaultParsedNode.js";
+import { Matcher } from "./core/Matcher.js";
+import { ParsingState } from "./core/ParsingState.js";
+import { Production } from "./core/Production.js";
+import { Sym } from "./core/Symbol.js";
+import { EBNFProduction } from "./ebnf/EBNFProduction.js";
+import { ParseListener } from "./ebnf/ParseListener.js";
+import { Rule } from "./ebnf/Rule.js";
 
 class ParsedNode extends DefaultParsedNode {
     

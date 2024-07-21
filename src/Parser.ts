@@ -1,23 +1,23 @@
-import { ParsedNode } from "./ParsedNode";
-import { Autocompleter, EntireSequenceCompleter } from "./Autocompleter";
-import { Autocompletion } from "./core/Autocompletion";
-import { Named } from "./core/Named";
-import { DefaultParsedNode } from "./core/DefaultParsedNode";
-import { Lexer } from "./core/Lexer";
-import { NonTerminal } from "./core/NonTerminal";
-import { ParsingState } from "./core/ParsingState";
-import { RDParser } from "./core/RDParser";
-import { Sym } from "./core/Symbol";
-import { Terminal } from "./core/Terminal";
-import { EBNF } from "./ebnf/EBNF";
-import { EBNFParsedNodeFactory } from "./ebnf/EBNFParsedNodeFactory";
-import { EBNFParser, ParseStartListener } from "./ebnf/EBNFParser";
-import { NamedRule } from "./ebnf/NamedRule";
-import { Rule } from "./ebnf/Rule";
-import { Evaluator } from "./Evaluator";
-import { IntRange } from "./util/IntRange";
-import { BNF } from "./core/BNF";
-import { Join } from "./ebnf/Join";
+import { ParsedNode } from "./ParsedNode.js";
+import { Autocompleter, EntireSequenceCompleter } from "./Autocompleter.js";
+import { Autocompletion } from "./core/Autocompletion.js";
+import { Named } from "./core/Named.js";
+import { DefaultParsedNode } from "./core/DefaultParsedNode.js";
+import { Lexer } from "./core/Lexer.js";
+import { NonTerminal } from "./core/NonTerminal.js";
+import { ParsingState } from "./core/ParsingState.js";
+import { RDParser } from "./core/RDParser.js";
+import { Sym } from "./core/Symbol.js";
+import { Terminal } from "./core/Terminal.js";
+import { EBNF } from "./ebnf/EBNF.js";
+import { EBNFParsedNodeFactory } from "./ebnf/EBNFParsedNodeFactory.js";
+import { EBNFParser, ParseStartListener } from "./ebnf/EBNFParser.js";
+import { NamedRule } from "./ebnf/NamedRule.js";
+import { Rule } from "./ebnf/Rule.js";
+import { Evaluator } from "./Evaluator.js";
+import { IntRange } from "./util/IntRange.js";
+import { BNF } from "./core/BNF.js";
+import { Join } from "./ebnf/Join.js";
 
 export class Parser {
 

@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig-base",
+  "comment": "The module and moduleResolution settings are motivated by https://evertpot.com/universal-commonjs-esm-typescript-packages/",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node10",
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": true,
+    "outDir": "./dist/cjs/",
+  },
+  "include": ["src"]
+}

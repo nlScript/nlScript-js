@@ -1,7 +1,7 @@
-import { NonTerminal } from "./NonTerminal";
-import { Terminal } from "./Terminal";
-import { Sym } from "./Symbol";
-import { DefaultParsedNode } from "./DefaultParsedNode";
+import { NonTerminal } from "./NonTerminal.js";
+import { Terminal } from "./Terminal.js";
+import { Sym } from "./Symbol.js";
+import { DefaultParsedNode } from "./DefaultParsedNode.js";
 
 type AstBuilder = (parent: DefaultParsedNode, ...children: DefaultParsedNode[]) => void;
 type ExtensionListener = (parent: DefaultParsedNode, ...children: DefaultParsedNode[]) => void;

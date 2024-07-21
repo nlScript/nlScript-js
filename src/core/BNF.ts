@@ -1,7 +1,7 @@
-import { Terminal } from "./Terminal";
-import { NonTerminal } from "./NonTerminal";
-import { Production } from "./Production";
-import { Sym } from "./Symbol";
+import { Terminal } from "./Terminal.js";
+import { NonTerminal } from "./NonTerminal.js";
+import { Production } from "./Production.js";
+import { Sym } from "./Symbol.js";
 
 class BNF {
     static readonly ARTIFICIAL_START_SYMBOL: NonTerminal = new NonTerminal("S'");

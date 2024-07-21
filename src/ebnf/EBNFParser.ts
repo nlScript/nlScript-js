@@ -1,9 +1,9 @@
-import { ParsedNode } from "../ParsedNode";
-import { BNF } from "../core/BNF";
-import { DefaultParsedNode } from "../core/DefaultParsedNode";
-import { Lexer } from "../core/Lexer";
-import { RDParser, SymbolSequence } from "../core/RDParser";
-import { EBNFParsedNodeFactory } from "./EBNFParsedNodeFactory";
+import { ParsedNode } from "../ParsedNode.js";
+import { BNF } from "../core/BNF.js";
+import { DefaultParsedNode } from "../core/DefaultParsedNode.js";
+import { Lexer } from "../core/Lexer.js";
+import { RDParser, SymbolSequence } from "../core/RDParser.js";
+import { EBNFParsedNodeFactory } from "./EBNFParsedNodeFactory.js";
 
 type ParseStartListener = () => void;
 
