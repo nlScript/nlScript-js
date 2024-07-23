@@ -1,5 +1,5 @@
 import { ParsedNode } from "./ParsedNode.js";
-import { Autocompleter, EntireSequenceCompleter } from "./Autocompleter.js";
+import { Autocompleter, EntireSequenceCompleter, GetAutocompletionFunction } from "./Autocompleter.js";
 import { Autocompletion } from "./core/Autocompletion.js";
 import { Named } from "./core/Named.js";
 import { DefaultParsedNode } from "./core/DefaultParsedNode.js";
@@ -14,7 +14,7 @@ import { EBNFParsedNodeFactory } from "./ebnf/EBNFParsedNodeFactory.js";
 import { EBNFParser, ParseStartListener } from "./ebnf/EBNFParser.js";
 import { NamedRule } from "./ebnf/NamedRule.js";
 import { Rule } from "./ebnf/Rule.js";
-import { Evaluator } from "./Evaluator.js";
+import { Evaluator, EvaluateFunction } from "./Evaluator.js";
 import { IntRange } from "./util/IntRange.js";
 import { BNF } from "./core/BNF.js";
 import { Join } from "./ebnf/Join.js";
@@ -70,12 +70,12 @@ export class Parser {
         return this.targetGrammar;
     }
 
-    defineSentence(pattern: string, evaluator: Evaluator | undefined): NamedRule;
-    defineSentence(pattern: string, evaluator: Evaluator | undefined, autocompleter: Autocompleter): NamedRule;
-    defineSentence(pattern: string, evaluator: Evaluator | undefined, completeEntireSequence: boolean): NamedRule;
+    defineSentence(pattern: string, evaluator: Evaluator | EvaluateFunction | undefined): NamedRule;
+    defineSentence(pattern: string, evaluator: Evaluator | EvaluateFunction | undefined, autocompleter: Autocompleter | GetAutocompletionFunction): NamedRule;
+    defineSentence(pattern: string, evaluator: Evaluator | EvaluateFunction | undefined, completeEntireSequence: boolean): NamedRule;
 
-    defineSentence(pattern: string, evaluator: Evaluator | undefined, howToComplete?: Autocompleter | boolean): NamedRule {
-        let autocompleter: Autocompleter | undefined;
+    defineSentence(pattern: string, evaluator: Evaluator | EvaluateFunction | undefined, howToComplete?: Autocompleter | GetAutocompletionFunction | boolean): NamedRule {
+        let autocompleter: Autocompleter | GetAutocompletionFunction | undefined;
         if(howToComplete === undefined)
             autocompleter = undefined;
         else if(typeof howToComplete === 'boolean')
@@ -87,12 +87,12 @@ export class Parser {
         return this.defineType("sentence", pattern, evaluator, autocompleter);
     }
 
-    defineType(type: string, pattern: string, evaluator: Evaluator | undefined): NamedRule;
-    defineType(type: string, pattern: string, evaluator: Evaluator | undefined, autocompleter: Autocompleter | undefined): NamedRule;
-    defineType(type: string, pattern: string, evaluator: Evaluator | undefined, completeEntireSequence: boolean): NamedRule;
+    defineType(type: string, pattern: string, evaluator: Evaluator | EvaluateFunction | undefined): NamedRule;
+    defineType(type: string, pattern: string, evaluator: Evaluator | EvaluateFunction | undefined, autocompleter: Autocompleter | GetAutocompletionFunction | undefined): NamedRule;
+    defineType(type: string, pattern: string, evaluator: Evaluator | EvaluateFunction | undefined, completeEntireSequence: boolean): NamedRule;
 
-    defineType(type: string, pattern: string, evaluator: Evaluator | undefined, howToComplete?: Autocompleter | boolean): NamedRule {
-        let autocompleter: Autocompleter | undefined;
+    defineType(type: string, pattern: string, evaluator: Evaluator | EvaluateFunction | undefined, howToComplete?: Autocompleter | GetAutocompletionFunction | boolean): NamedRule {
+        let autocompleter: Autocompleter | GetAutocompletionFunction | undefined;
         if(howToComplete === undefined)
             autocompleter = undefined;
         else if(typeof howToComplete === 'boolean')

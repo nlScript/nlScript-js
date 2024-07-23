@@ -136,12 +136,12 @@ export class EBNFCore {
 
     tuple(type: string | undefined, child: Named<any>, ...names: string[]): Rule {
         const wsStar: NamedRule = this.star(undefined, Terminal.WHITESPACE.withName()).withName("ws*");
-        wsStar.get().setAutocompleter({getAutocompletion: (pn, _justCheck) => Autocompletion.literal(pn, [""]) });
+        wsStar.get().setAutocompleter((pn, _justCheck) => Autocompletion.literal(pn, [""]));
         const open: Rule      = this.sequence(undefined, Terminal.literal("(").withName("open"), wsStar);
         const close: Rule     = this.sequence(undefined, wsStar, Terminal.literal(")").withName("close"));
         const delimiter: Rule = this.sequence(undefined, wsStar, Terminal.literal(",").withName("delimiter"), wsStar);
         const ret: Rule = this.join(type, child, open.getTarget(), close.getTarget(), delimiter.getTarget(), true, names);
-        ret.setAutocompleter({getAutocompletion: (pn, justCheck) => {
+        ret.setAutocompleter((pn, justCheck) => {
             if(pn.getParsedString().length > 0)
                 return undefined;
             if(justCheck)
@@ -155,7 +155,7 @@ export class EBNFCore {
             }
             seq.addLiteral(close.getTarget(), "close", ")");
             return seq.asArray();
-        }});
+        });
         return ret;
     }
 

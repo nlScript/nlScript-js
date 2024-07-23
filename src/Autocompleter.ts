@@ -11,6 +11,8 @@ import { EBNFParsedNodeFactory } from "./ebnf/EBNFParsedNodeFactory.js";
 import { Rule } from "./ebnf/Rule.js";
 import { Sequence } from "./ebnf/Sequence.js";
 
+type GetAutocompletionFunction = (n: DefaultParsedNode, justCheck: boolean) => Autocompletion[] | undefined;
+
 interface Autocompleter {
     getAutocompletion(n: DefaultParsedNode, justCheck: boolean): Autocompletion[] | undefined;
 }
@@ -105,4 +107,4 @@ module Autocompleter {
     }
 };
 
-export { Autocompleter, EntireSequenceCompleter, IfNothingYetEnteredAutocompleter };
+export { GetAutocompletionFunction, Autocompleter, EntireSequenceCompleter, IfNothingYetEnteredAutocompleter };

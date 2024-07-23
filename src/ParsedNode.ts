@@ -77,7 +77,7 @@ class ParsedNode extends DefaultParsedNode {
 
         let rule: Rule | undefined = this.getRule();
         if(rule !== undefined && rule.getEvaluator() !== undefined)
-            return rule.getEvaluator()(this);
+            return rule.getEvaluator().evaluate(this);
         
         return super.evaluate();
     }

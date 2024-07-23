@@ -1,9 +1,9 @@
-import { Autocompleter } from "../Autocompleter.js";
+import { Autocompleter, GetAutocompletionFunction } from "../Autocompleter.js";
 import { RepresentsSymbol } from "../core/RepresentsSymbol.js";
 import { BNF } from "../core/BNF.js";
 import { NonTerminal } from "../core/NonTerminal.js";
 import { Sym } from "../core/Symbol.js";
-import { Evaluator } from "../Evaluator.js";
+import { Evaluator, EvaluateFunction } from "../Evaluator.js";
 import { EBNFProduction } from "./EBNFProduction.js";
 import { NamedRule } from "./NamedRule.js";
 import { ParseListener } from "./ParseListener.js";
@@ -48,7 +48,9 @@ abstract class Rule implements RepresentsSymbol {
 		return this.evaluator;
 	}
 
-	setEvaluator(evaluator: Evaluator): Rule {
+	setEvaluator(evaluator: Evaluator | EvaluateFunction): Rule {
+		if(typeof(evaluator) === 'function')
+			evaluator = { evaluate: evaluator };
 		this.evaluator = evaluator;
 		return this;
 	}
@@ -57,7 +59,9 @@ abstract class Rule implements RepresentsSymbol {
 		return this.autocompleter;
 	}
 
-	setAutocompleter(autocompleter: Autocompleter | undefined): Rule {
+	setAutocompleter(autocompleter: Autocompleter | GetAutocompletionFunction | undefined): Rule {
+		if(typeof(autocompleter) === 'function')
+			autocompleter = { getAutocompletion: autocompleter };
 		this.autocompleter = autocompleter;
 		return this;
 	}

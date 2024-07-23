@@ -123,11 +123,11 @@ export class LanguageControl {
 
         parser.defineType("defined-channels", "'{channel:[A-Za-z0-9]:+}'",
                           e => e.getParsedString("channel"),
-                          { getAutocompletion: e => Autocompletion.literal(e, definedChannels)});
+                          e => Autocompletion.literal(e, definedChannels));
 
         parser.defineType("defined-positions", "'{position:[A-Za-z0-9]:+}'",
                           e => e.getParsedString("position"),
-                          { getAutocompletion: e => Autocompletion.literal(e, definedRegions)});
+                          e => Autocompletion.literal(e, definedRegions));
 
         parser.defineType("time-unit", "second(s)", _e => 1);
         parser.defineType("time-unit", "minute(s)", _e => 60);
@@ -446,11 +446,11 @@ export function makeMicroscopeParser(): Parser {
 
     parser.defineType("defined-channels", "'{channel:[A-Za-z0-9]:+}'",
             _e => undefined,
-            { getAutocompletion: e => Autocompletion.literal(e, definedChannels) });
+            e => Autocompletion.literal(e, definedChannels));
 
     parser.defineType("defined-positions", "'{position:[A-Za-z0-9]:+}'",
             e => e.getParsedString("position"),
-            { getAutocompletion: e => Autocompletion.literal(e, definedRegions) });
+            e => Autocompletion.literal(e, definedRegions));
 
     parser.defineType("time-unit", "second(s)", _e => 1);
     parser.defineType("time-unit", "minute(s)", _e => 60);
