@@ -78,7 +78,7 @@ Graphical user interfaces can easily become complex and confusing as the number 
 
 A traditional graphical user interface (GUI) could e.g. look like this:
 
-![](https://nlscript.github.io/Bla/images/Screenshot-00.png)
+![](https://nlscript.github.io/nlScript-java/images/Screenshot-00.png)
 
 
 where the user can activate the various algorithms and specify their parameters as necessary. This user interface however does not take into account that different algorithms could occur repeatedly, and it does not allow to change the order.
@@ -95,8 +95,9 @@ Apply Gaussian blurring with a standard deviation of 1 pixel(s).
 
 ## More information
 
-* [A step-by-step tutorial](https://nlScript.github.io/nlScript-tutorial-js)
-* [Explanations for it](https://nlScript.github.io/nlScript-java)
+* [A step-by-step tutorial](https://nlscript.github.io/nlScript-java)
+* [The tutorial source code](https://github.com/nlScript/nlScript-tutorial-js)
+* [The tutorial web interface](https://nlScript.github.io/nlScript-tutorial-js)
 * [Details how to define variables](https://nlScript.github.io/nlScript-java/variables.html)
 * [Built-in types apart from `float`](https://nlScript.github.io/nlScript-java/#built-in-types)
 * [More detail about custom types](https://nlScript.github.io/nlScript-java/custom-types.html)
