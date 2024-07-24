@@ -102,6 +102,12 @@ export class ACEditor {
         // editor.dispatch({selection: {anchor: 8, head: 11}});
     }
 
+    setText(text: string): void {
+        this.editor.dispatch({
+            changes: {from: 0, to: this.editor.state.doc.length, insert: text}
+          });
+    }
+
     getSelectedLinesStart(): number {
         const selFrom: number = this.editor.state.selection.main.from;
         return this.editor.state.doc.lineAt(selFrom).from;
