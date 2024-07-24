@@ -1,11 +1,9 @@
 import { Parser } from "./Parser.js";
 import { ACEditor } from "./ui/ACEditor.js";
-import { makeMicroscopeParser } from "./microscope/LanguageControl.js";
 
 export * from "./core/index.js";
 export * from "./ebnf/index.js";
 export * from "./util/index.js";
-export * from "./microscope/index.js";
 export * from "./ui/index.js";
 export * from "./Autocompleter.js";
 export * from "./Evaluator.js";
@@ -28,7 +26,6 @@ function makeSimpleParser(): Parser {
 }
 
 
-// const parser = makeMicroscopeParser();
 // const parser = makeSimpleParser();
 
 // const editor = new ACEditor(parser, document.body);
