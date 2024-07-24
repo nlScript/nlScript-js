@@ -1,7 +1,7 @@
-import { Rule } from "src/ebnf/Rule.js";
+import { Rule } from "../ebnf/Rule.js";
 import { DefaultParsedNode } from "./DefaultParsedNode.js";
 import { Sym } from "./Symbol.js";
-import { ParsedNode } from "src/ParsedNode.js";
+import { ParsedNode } from "../ParsedNode.js";
 import { Named } from "./Named.js";
 
 abstract class Autocompletion {

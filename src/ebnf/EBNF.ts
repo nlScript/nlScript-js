@@ -1,10 +1,10 @@
-import { ParsedNode } from "src/ParsedNode.js";
+import { ParsedNode } from "../ParsedNode.js";
 import { Autocompleter, EntireSequenceCompleter, IfNothingYetEnteredAutocompleter } from "../Autocompleter.js";
 import { Terminal } from "../core/Terminal.js";
 import { IntRange } from "../util/IntRange.js";
 import { EBNFCore } from "./EBNFCore.js";
 import { Rule } from "./Rule.js";
-import { Autocompletion } from "src/core/Autocompletion.js";
+import { Autocompletion } from "../core/Autocompletion.js";
 
 export class EBNF extends EBNFCore {
 
