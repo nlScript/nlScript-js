@@ -30,7 +30,7 @@ class NonTerminal extends Sym {
             progressing = new Set<string>();
         const productions: Production[] = bnf.getProductions(this);
         for(const p of productions) {
-            if(p.toString() in progressing)
+            if(progressing.has(p.toString()))
                 continue;
             progressing.add(p.toString());
             const rhs: Sym[] = p.getRight();
