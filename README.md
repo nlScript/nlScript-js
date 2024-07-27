@@ -109,11 +109,11 @@ Apply Gaussian blurring with a standard deviation of 1 pixel(s).
 ### CommonJS module system
 ```
 npm init -y
-npm install @nlscript/nlScript-js
+npm install @nlscript/nlScript
 ```
 Now save the following script as `index.js`:
 ```
-l = require('@nlScript/nlScript-js');
+l = require('@nlScript/nlScript');
 
 let parser = new l.Parser()
 parser.defineType("my-color", "blue", undefined);
@@ -133,11 +133,11 @@ node index.js
 ```
 npm init -y
 npm pkg set type="module"
-npm install @nlscript/nlScript-js
+npm install @nlscript/nlScript
 ```
 Now save the following script as `index.js`:
 ```
-import { Parser } from '@nlscript/nlScript-js';
+import { Parser } from '@nlscript/nlScript';
 
 let parser = new Parser()
 parser.defineType("my-color", "blue", undefined);
@@ -156,12 +156,12 @@ node index.js
 ### Typescript
 ```
 npm init -y
-npm install @nlscript/nlScript-js
+npm install @nlscript/nlScript
 npm install --save-dev typescript ts-loader
 ```
 Now save the following script as `index.ts`:
 ```
-import { Parser, Autocompletion } from '@nlscript/nlScript-js';
+import { Parser, Autocompletion } from '@nlscript/nlScript';
 
 const parser = new Parser()
 parser.defineType("my-color", "blue", undefined);

@@ -1,5 +1,5 @@
 {
-  "name": "@nlscript/nlScript-js",
+  "name": "@nlscript/nlScript",
   "version": "0.1.0",
   "description": "Typescript/Javascript implementation of nlScript",
   "main": "dist/index.cjs",
