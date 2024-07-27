@@ -14,7 +14,7 @@ npm init -y
 npm install $currDir
 
 cat <<EOF > index.js
-l = require('@nlScript/nlScript');
+l = require('@nlscript/nlscript');
 
 // console.log(l);
 
@@ -42,7 +42,7 @@ npm pkg set type="module"
 npm install $currDir
 
 cat <<EOF > index.js
-import { Parser }  from '@nlscript/nlScript';
+import { Parser }  from '@nlscript/nlscript';
 
 // console.log(Parser);
 
@@ -70,7 +70,7 @@ npm install $currDir
 npm install --save-dev typescript ts-loader
 
 cat <<EOF > index.ts
-import { Parser, Autocompletion }  from '@nlscript/nlScript';
+import { Parser, Autocompletion }  from '@nlscript/nlscript';
 
 // console.log(Parser);
 
