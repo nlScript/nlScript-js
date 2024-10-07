@@ -144,6 +144,12 @@ export class EBNF extends EBNFCore {
 		const gray       : Rule = this.sequence(undefined, Terminal.literal("gray"        ).withName()).setEvaluator(_pn => EBNF.rgb2int(128, 128, 128));
 
         const custom: Rule = this.tuple(undefined, this.INTEGER.withName(), "red", "green", "blue");
+        custom.setEvaluator(pn => {
+            const r: number = pn.evaluate("red");
+            const g: number = pn.evaluate("green");
+            const b: number = pn.evaluate("blue");
+            return EBNF.rgb2int(r, g, b);
+        });
 
         return this.or(EBNF.COLOR_NAME,
             custom.withName(),
