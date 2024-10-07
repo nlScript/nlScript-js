@@ -53,7 +53,7 @@ class DefaultParsedNode {
             return undefined;
 
         if(this.symbol instanceof Literal)
-            return Autocompletion.literal(this, [this.symbol.getSymbol()]);
+            return Autocompletion.literal(this, [this.symbol.getLiteral()]);
 
         let name: string = this.getName();
         if(name === Named.UNNAMED)

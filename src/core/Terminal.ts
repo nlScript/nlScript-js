@@ -96,13 +96,21 @@ class Digit extends Terminal {
 }
 
 class Literal extends Terminal {
-  constructor(symbol: string) {
-    super(symbol);
+  
+  private readonly literal: string;
+
+  constructor(literal: string) {
+    super("literal:" + literal);
+    this.literal  = literal;
+  }
+
+  getLiteral(): string {
+    return this.literal;
   }
 
   override matches(lexer: Lexer): Matcher {
     const pos = lexer.getPosition();
-    const symbol = this.getSymbol();
+    const symbol = this.literal;
     for (let i = 0; i < symbol.length; i++) {
       if (lexer.isAtEnd(i))
         return new Matcher(

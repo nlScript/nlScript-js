@@ -221,12 +221,14 @@ function testVariable(): void {
 
     test = "{blubb , alkjad asd 4. <>l}";
     evaluatedTerminal = evaluateHighlevelParser(hlp, test);
-    expect(evaluatedTerminal.getSymbol().getSymbol()).toBe("blubb , alkjad asd 4. <>l");
+    let literal:Literal = evaluatedTerminal.get() as Literal;
+    expect(literal.getLiteral()).toBe("blubb , alkjad asd 4. <>l");
     expect(evaluatedTerminal.getName()).toBe("blubb , alkjad asd 4. <>l");
 
     test = "{heinz}";
     evaluatedTerminal = evaluateHighlevelParser(hlp, test);
-    expect(evaluatedTerminal.getSymbol().getSymbol()).toBe("heinz");
+    literal = evaluatedTerminal.get() as Literal;
+    expect(literal.getLiteral()).toBe("heinz");
     expect(evaluatedTerminal.getName()).toBe("heinz");
 
     test = "{heinz:+}";
@@ -235,7 +237,8 @@ function testVariable(): void {
     rule = hlp.getTargetGrammar().getRules(evaluatedNonTerminal.get())[0];
     expect(rule).toBeInstanceOf(Plus);
     plus = rule as Plus;
-    expect(plus.getEntry().getSymbol()).toBe("heinz");
+    literal = plus.getEntry() as Literal;
+    expect(literal.getLiteral()).toBe("heinz");
 
     test = "{heinz:3-5}";
     evaluatedNonTerminal = evaluateHighlevelParser(hlp, test);
@@ -245,16 +248,19 @@ function testVariable(): void {
     repeat = rule as Repeat;
     expect(repeat.getFrom()).toBe(3);
     expect(repeat.getTo()).toBe(5);
-    expect(repeat.getEntry().getSymbol()).toBe("heinz");
+    literal = repeat.getEntry() as Literal;
+    expect(literal.getLiteral()).toBe("heinz");
 
     test = "{, }";
     evaluatedTerminal = evaluateHighlevelParser(hlp, test);
-    expect(evaluatedTerminal.getSymbol().getSymbol()).toBe(", ");
+    literal = evaluatedTerminal.get() as Literal;
+    expect(literal.getLiteral()).toBe(", ");
     expect(evaluatedTerminal.getName()).toBe(", ");
 
     test = "{,\n }";
     evaluatedTerminal = evaluateHighlevelParser(hlp, test);
-    expect(evaluatedTerminal.getSymbol().getSymbol()).toBe(",\n ");
+    literal = evaluatedTerminal.get() as Literal;
+    expect(literal.getLiteral()).toBe(",\n ");
     expect(evaluatedTerminal.getName()).toBe(",\n ");
 }
 
@@ -266,19 +272,22 @@ function testNoVariable(): void {
     let test = "lk345}.-";
     let evaluatedTerminal: Named<Terminal> = evaluateHighlevelParser(hlp, test);
     expect(evaluatedTerminal.get()).toBeInstanceOf(Literal);
-    expect(evaluatedTerminal.getSymbol().getSymbol()).toBe(test);
+    let literal:Literal = evaluatedTerminal.get() as Literal;
+    expect(literal.getLiteral()).toBe(test);
     expect(evaluatedTerminal.getName()).toBe(Named.UNNAMED);
 
     test = "--1'x}";
     evaluatedTerminal = evaluateHighlevelParser(hlp, test);
     expect(evaluatedTerminal.get()).toBeInstanceOf(Literal);
-    expect(evaluatedTerminal.getSymbol().getSymbol()).toBe(test);
+    literal = evaluatedTerminal.get() as Literal;
+    expect(literal.getLiteral()).toBe(test);
     expect(evaluatedTerminal.getName()).toBe(Named.UNNAMED);
 
     test = ".";
     evaluatedTerminal = evaluateHighlevelParser(hlp, test);
     expect(evaluatedTerminal.get()).toBeInstanceOf(Literal);
-    expect(evaluatedTerminal.getSymbol().getSymbol()).toBe(test);
+    literal = evaluatedTerminal.get() as Literal;
+    expect(literal.getLiteral()).toBe(test);
     expect(evaluatedTerminal.getName()).toBe(Named.UNNAMED);
 
     const testToFail: string = "lj{l";
