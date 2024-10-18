@@ -19,7 +19,7 @@ import {defaultHighlightStyle, syntaxHighlighting, indentOnInput, bracketMatchin
     foldGutter, foldKeymap} from "@codemirror/language"
 import {defaultKeymap, history, historyKeymap} from "@codemirror/commands"
 import {searchKeymap} from "@codemirror/search"
-import {autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap} from "@codemirror/autocomplete"
+import {autocompletion, completionKeymap, closeBrackets, closeBracketsKeymap, completionStatus, pickedCompletion} from "@codemirror/autocomplete"
 import {lintKeymap} from "@codemirror/lint"
 
 
@@ -86,8 +86,23 @@ export class ACEditor {
         });
         this.errorHighlight = new ErrorHighlight(this.editor);
         this.completer = new ACCompleter(this.editor);
+
+        const completionPickedListenerExtension = EditorView.updateListener.of((v) => {
+            const { transactions } = v;
+            for (let transaction of transactions) {
+                const picked = transaction.annotation(pickedCompletion);
+                if(picked !== undefined) {
+                    // This is only the case when clicked on an option. Not if <Enter> is
+                    // pressed on an item, and not if <Escape> is pressed
+                    that.autocomplete();
+                }
+            }
+        });
+
+
         this.editor.dispatch({
             effects: StateEffect.reconfigure.of([
+                completionPickedListenerExtension,
                 EditorView.domEventHandlers({
                     keydown: (e: KeyboardEvent, view: EditorView) => that.handleKeyEvent(e, view),
                 }),
