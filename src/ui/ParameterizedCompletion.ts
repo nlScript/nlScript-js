@@ -143,6 +143,14 @@ export class ParameterizedCompletion {
         return undefined;
     }
 
+    getCurrentParamIndex(): number | undefined {
+        return this.getParamIndexForCursor();
+    }
+
+    getParameter(idx: number): ParsedParam {
+        return this.parameters[idx];
+    }
+
     getCurrentParameter(): ParsedParam | undefined {
         const idx: number | undefined = this.getParamIndexForCursor();
         if(idx === undefined)
@@ -258,7 +266,8 @@ export class ParameterizedCompletion {
 
         if(autocompletion instanceof Autocompletion.Parameterized) {
             const s: string = autocompletion.getParamName();
-            ret.push(new ParsedParam(s, 0, s.length, autocompletion));
+            const allOptions: Autocompletion[] = [autocompletion];
+            ret.push(new ParsedParam(s, 0, s.length, autocompletion as Autocompletion.Parameterized, allOptions));
             return s;
         }
 
@@ -274,7 +283,7 @@ export class ParameterizedCompletion {
                     const p: Autocompletion.Parameterized = new Autocompletion.Parameterized(sequence.getChildren()[idx], name, name);
                     const i0: number = offset + insertionString.length;
                     const i1 = i0 + name.length;
-                    ret.push(new ParsedParam(name, i0, i1, p));
+                    ret.push(new ParsedParam(name, i0, i1, p, autocompletions));
                     insertionString += name;
                 }
                 else if(n === 1) {
@@ -287,7 +296,7 @@ export class ParameterizedCompletion {
                         const s: string = parameterized.getParamName();
                         const i0: number = offset + insertionString.length;
                         const i1: number = i0 + s.length;
-                        ret.push(new ParsedParam(s, i0, i1, parameterized));
+                        ret.push(new ParsedParam(s, i0, i1, parameterized, [parameterized]));
                         insertionString += s;
                     }
                     else if(single instanceof Autocompletion.EntireSequence) {
@@ -313,13 +322,19 @@ export class ParsedParam {
     readonly i0: number;
     readonly i1: number;
 
-    readonly autocompletion: Autocompletion;
+    readonly parameterizedCompletion: Autocompletion.Parameterized;
+    readonly allOptions: Autocompletion[];
 
-    constructor(name: string, i0: number, i1: number, autocompletion: Autocompletion) {
+    constructor(name: string,
+                i0: number,
+                i1: number,
+                parameterizedCompletion: Autocompletion.Parameterized,
+                allOptions: Autocompletion[]) {
         this.name = name;
         this.i0 = i0;
         this.i1 = i1;
-        this.autocompletion = autocompletion;
+        this.parameterizedCompletion = parameterizedCompletion;
+        this.allOptions = allOptions;
     }
 
     toString(): string {

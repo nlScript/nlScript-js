@@ -182,6 +182,8 @@ export class ACEditor {
         }
     }
 
+    private lastInsertionPosition: number = -1;
+
     // corresponds to AutocompletionContext.insertCompletion()
     insertCompletion(completion: Autocompletion | undefined): void {
         if(!completion)
@@ -189,8 +191,13 @@ export class ACEditor {
         const selection = this.editor.state.selection;
         const caret = selection.main.head;
 
-        const entireText: string = this.editor.state.doc.toString();
-        const cursorIsAtEnd: boolean = caret === entireText.length || entireText.substring(caret).trim().length == 0;
+        if(this.lastInsertionPosition === caret)
+            return;
+
+        this.lastInsertionPosition = caret;
+
+        // const entireText: string = this.editor.state.doc.toString();
+        // const cursorIsAtEnd: boolean = caret === entireText.length || entireText.substring(caret).trim().length == 0;
 
         if(selection.main.empty)
             this.editor.dispatch({selection: { anchor: caret, head: caret - this.completer.completionPrefix().length }})
@@ -205,17 +212,24 @@ export class ACEditor {
         else {
             this.editor.dispatch(this.editor.state.replaceSelection(repl));
             this.completer.hidePopup();
-            if(cursorIsAtEnd)
-                setTimeout(() => this.autocomplete());
+            setTimeout(() => this.autocomplete());
         }
     }
 
-    parameterChanged(_pIdx: number, wasLast: boolean): void {
+    parameterChanged(pIdx: number, wasLast: boolean): void {
+        const source: ParameterizedCompletion = this.parameterizedCompletion as ParameterizedCompletion;
         if(wasLast) {
             this.cancelParameterizedCompletion();
             this.autocomplete();
         } else {
-            this.autocomplete(false);
+            // this.autocomplete(false);
+            const completions: Autocompletion[] = source.getParameter(pIdx).allOptions;
+            this.completer.setCompletions(completions);
+            if(completions.length < 2)
+                this.completer.hidePopup();
+            else {
+                this.completer.complete();
+            }
         }
     }
 
@@ -230,7 +244,11 @@ export class ACEditor {
         console.log("keydown", e.key, e);
         if(this.completer.isActive()) {
             if(e.key === "Enter") {
-                this.insertCompletion(this.completer.getSelected());
+                const completion: Autocompletion | undefined = this.completer.getSelected();
+                if(completion !== undefined) {
+                    this.insertCompletion(completion);
+                    // setTimeout(() => this.autocomplete());
+                }
                 return true;
             }
             if(e.key === "ArrowUp") {
@@ -307,7 +325,7 @@ export class ACEditor {
                     if(comp instanceof Autocompletion.EntireSequence) {
                         let tmp: ParsedParam[] = [];
                         ParameterizedCompletion.parseParameters(comp, tmp, 0);
-                        comp = tmp[0].autocompletion;
+                        comp = tmp[0].parameterizedCompletion;
                         symbol = comp.forSymbol;
                     }
                     if(symbol.equals(this.parameterizedCompletion.getForAutocompletion().forSymbol)) {
@@ -318,7 +336,7 @@ export class ACEditor {
                     // check if symbol is a descendent of the parameters autocompletion symbol
                     const pp: ParsedParam | undefined = this.parameterizedCompletion.getCurrentParameter();
                     console.log("current param: " + pp?.toString());
-                    const parameterSymbol: Sym | undefined = pp?.autocompletion.forSymbol;
+                    const parameterSymbol: Sym | undefined = pp?.parameterizedCompletion.forSymbol;
                     // symbol == parameterSymbol? -> fine
                     if(symbol.equals(parameterSymbol)) {
                         atLeastOneCompletionForCurrentParamter = true;
