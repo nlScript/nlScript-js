@@ -20,6 +20,8 @@ abstract class Rule implements RepresentsSymbol {
 	private autocompleter: Autocompleter | undefined;
 	private _onSuccessfulParsed: ParseListener;
 
+	protected productions: EBNFProduction[] = [];
+
 	constructor(type: string, tgt: NonTerminal | undefined, ...children: Sym[]) {
 		this.type = type;
 		this.tgt = tgt !== undefined
@@ -66,6 +68,10 @@ abstract class Rule implements RepresentsSymbol {
 		return this;
 	}
 
+	getProductions(): EBNFProduction[] {
+		return this.productions;
+	}
+
 	onSuccessfulParsed(listener: ParseListener): Rule {
 		this._onSuccessfulParsed = listener;
 		return this;
@@ -77,6 +83,7 @@ abstract class Rule implements RepresentsSymbol {
 
 	static addProduction(grammar: BNF, rule: Rule, left: NonTerminal, ...right: Sym[]): EBNFProduction {
 		let production: EBNFProduction = new EBNFProduction(rule, left, ...right);
+		rule.productions.push(production);
 		grammar.addProduction(production);
 		return production;
 	}

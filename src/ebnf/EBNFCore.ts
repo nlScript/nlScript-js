@@ -1,4 +1,4 @@
-import { Autocompleter, IfNothingYetEnteredAutocompleter } from "../Autocompleter.js";
+import { IfNothingYetEnteredAutocompleter } from "../Autocompleter.js";
 import { Named } from "../core/Named.js";
 import { BNF } from "../core/BNF.js";
 import { NonTerminal } from "../core/NonTerminal.js";
@@ -16,6 +16,7 @@ import { Sequence } from "./Sequence.js";
 import { Star } from "./Star.js";
 import { Evaluator } from "../Evaluator.js"
 import { Autocompletion } from "../core/Autocompletion.js";
+import { Production } from "../core/Production.js";
 
 export class EBNFCore {
 
@@ -25,14 +26,11 @@ export class EBNFCore {
 
     private readonly bnf: BNF = new BNF();
 
-    private compiled: boolean = false;
-
     constructor(other?: EBNFCore) {
         if(other !== undefined) {
             for(let [key, value] of other.symbols)
                 this.symbols.set(key, value);
             this.rules.push(...other.rules);
-            this.compiled = other.compiled;
         }
     }
 
@@ -41,19 +39,11 @@ export class EBNFCore {
     }
 
     compile(topLevelSymbol: Sym): void {
-        this.compiled = false; // otherwise removeRules() and addRule() will complain
         // update the start symbol
         this.removeRules(BNF.ARTIFICIAL_START_SYMBOL);
         const sequence: Sequence = new Sequence(BNF.ARTIFICIAL_START_SYMBOL, topLevelSymbol, BNF.ARTIFICIAL_STOP_SYMBOL);
         this.addRule(sequence);
         sequence.setEvaluator(Evaluator.FIRST_CHILD_EVALUATOR);
-
-        this.bnf.reset();
-
-        for(let r of this.rules)
-            r.createBNF(this.bnf);
-
-        this.compiled = true;
     }
 
     getBNF(): BNF {
@@ -191,14 +181,28 @@ export class EBNFCore {
                 this.symbols.set(s.getSymbol(), s);
         }
         this.rules.push(rule);
-        this.compiled = false;
+        rule.createBNF(this.bnf);
     }
 
     public removeRules(symbol: NonTerminal): void {
-        for(let i = this.rules.length - 1; i >= 0; i--)
-            if(this.rules[i].getTarget().equals(symbol))
+        // const toKeep:   Rule[] = this.rules.filter(r => !r.getTarget().equals(symbol));
+        // const toRemove: Rule[] = this.rules.splice(
+        //     0,
+        //     this.rules.length,
+        //     ...toKeep);
+        // const productionsToRemove: Production[] = [];
+        // toRemove.forEach(r => productionsToRemove.push(...r.getProductions()))
+
+        // this.bnf.removeProductions(productionsToRemove);
+        const toRemove: Production[] = [];
+        for(let i = this.rules.length - 1; i >= 0; i--) {
+            const r : Rule = this.rules[i];
+            if(r.getTarget().equals(symbol)) {
                 this.rules.splice(i, 1);
-        this.compiled = false;
+                toRemove.push(...r.getProductions());
+            }
+        }
+        this.bnf.removeProductions(toRemove);
     }
 
     private newOrExistingNonTerminal(type: string | undefined): NonTerminal | undefined {

@@ -24,11 +24,20 @@ class BNF {
     }
 
     removeStartProduction(): void {
-        var i = this.productions.length;
+        let i = this.productions.length;
         while (i--) {
             if (this.productions[i].getLeft().equals(BNF.ARTIFICIAL_START_SYMBOL)) {
                 this.productions.splice(i, 1);
                 break;
+            }
+        }
+    }
+
+    removeProductions(toRemove: Production[]): void {
+        let i = this.productions.length;
+        while(i--) {
+            if(toRemove.some(p => p.equals(this.productions[i]))) {
+                this.productions.splice(i, 1);
             }
         }
     }

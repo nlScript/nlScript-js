@@ -90,6 +90,7 @@ export class Join extends Rule {
             const star: Star = new Star(undefined, next);
             star.setParsedChildNames("next");
             star.createBNF(grammar);
+            this.productions.push(...star.getProductions());
             const p: Production = Rule.addProduction(grammar, this, repetition, first, star.getTarget());
             const that = this;
             p.onExtension((_parent, ...children) => {
@@ -109,6 +110,7 @@ export class Join extends Rule {
             const star = new Star(undefined, next);
             star.setParsedChildNames("next");
             star.createBNF(grammar);
+            this.productions.push(...star.getProductions());
 
             const p1 = Rule.addProduction(grammar, this, repetition, first, star.getTarget());
             const p2 = Rule.addProduction(grammar, this, repetition, Terminal.EPSILON);
@@ -154,6 +156,7 @@ export class Join extends Rule {
                     const repeat: Repeat = new Repeat(undefined, next, 0, upper - 1);
                     repeat.setParsedChildNames("next");
                     repeat.createBNF(grammar);
+                    this.productions.push(...repeat.getProductions());
                     const p = Rule.addProduction(grammar, this, repetition, first, repeat.getTarget());
                     const that = this;
                     p.setAstBuilder(astBuilder);
@@ -167,6 +170,7 @@ export class Join extends Rule {
                     const repeat: Repeat = new Repeat(undefined, next, lower - 1, upper - 1);
                     repeat.setParsedChildNames("next");
                     repeat.createBNF(grammar);
+                    this.productions.push(...repeat.getProductions());
                     const p = Rule.addProduction(grammar, this, repetition, first, repeat.getTarget());
                     const that = this;
                     p.setAstBuilder(astBuilder);
