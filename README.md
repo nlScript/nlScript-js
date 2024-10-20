@@ -26,7 +26,7 @@ The Natural Language Scripting framework offers a convenient way to define the s
     <div id="nls-container"></div>
 
     <!-- The only javascript file needed for nlScript -->
-    <script src="https://cdn.jsdelivr.net/npm/@nlscript/nlscript@0.2.0/dist/umd/nlScript.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@nlscript/nlscript@0.3.0/dist/umd/nlScript.js"></script>
 
     <!-- Load the library for the actual processing -->
     <script src="preprocessing.js"></script>
