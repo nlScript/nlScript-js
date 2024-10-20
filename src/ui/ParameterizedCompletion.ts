@@ -306,7 +306,7 @@ export class ParameterizedCompletion {
                         insertionString += s;
                     }
                     else {
-                        console.log("Unknown completion type: " + typeof(autocompletion))
+                        // console.log("Unknown completion type: " + typeof(autocompletion))
                     }
                 }
             }

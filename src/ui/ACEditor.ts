@@ -179,7 +179,6 @@ export class ACEditor {
     }
 
     run(selectedLinesOnly: boolean = false): void {
-        console.debug("running");
         this.outputElement.textContent = "";
         const entireText: string = this.editor.state.doc.toString();
         try {
@@ -256,7 +255,6 @@ export class ACEditor {
     }
 
     handleKeyEvent(e: KeyboardEvent, view: EditorView): boolean {
-        console.log("keydown", e.key, e);
         if(this.completer.isActive()) {
             if(e.key === "Enter") {
                 const completion: Autocompletion | undefined = this.completer.getSelected();
@@ -317,7 +315,6 @@ export class ACEditor {
         let pn: ParsedNode;
         try {
             pn = this.parser.parse(textToCursor, autocompletions);
-            console.log(pn.getMatcher().state);
         } catch(e: any) {
             if(e instanceof ParseException) {
                 const f: Matcher = e.getFirstAutocompletingAncestorThatFailed().getMatcher();
@@ -350,7 +347,6 @@ export class ACEditor {
 
                     // check if symbol is a descendent of the parameters autocompletion symbol
                     const pp: ParsedParam | undefined = this.parameterizedCompletion.getCurrentParameter();
-                    console.log("current param: " + pp?.toString());
                     const parameterSymbol: Sym | undefined = pp?.parameterizedCompletion.forSymbol;
                     // symbol == parameterSymbol? -> fine
                     if(symbol.equals(parameterSymbol)) {
@@ -367,17 +363,10 @@ export class ACEditor {
                     }
                 }
                 if(!atLeastOneCompletionForCurrentParamter) {
-                    // console.log("now I'd call next.");
                     this.parameterizedCompletion.next();
                     return;
                 }
             }
-            else {
-                console.log("no completions");
-            }
-        }
-        else {
-            console.log("parameterized completion == null");
         }
 
         if(autocompletions.length === 1) {

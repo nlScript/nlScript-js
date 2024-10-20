@@ -146,15 +146,11 @@ class Letter extends Terminal {
     const pos = lexer.getPosition();
     if (lexer.isAtEnd())
       return new Matcher(ParsingState.END_OF_INPUT, pos, "");
+
     const c = lexer.peek();
-    console.debug("Test if " + c + " is a letter");
-    if (c.match(/[a-zA-Z]/)) {
-      console.debug("It is");
+    if (c.match(/[a-zA-Z]/))
       return new Matcher(ParsingState.SUCCESSFUL, pos, c);
-    }
-    else {
-      console.debug("it is not");
-    }
+
     return new Matcher(ParsingState.FAILED, pos, c);
   }
 
